@@ -1,0 +1,16 @@
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.csproj.AssemblyReference.cache
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.csproj.GenerateResource.cache
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.csproj.CoreCompileInputs.cache
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\bin\Debug\UserControlMembreEquipageDetail.dll
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\bin\Debug\UserControlMembreEquipageDetail.pdb
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.dll
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.pdb
+C:\Users\alexi\Documents\BUTINFO\A1\S2\SAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.UCEquipageDetail.resources
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\bin\Debug\UserControlMembreEquipageDetail.dll
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\bin\Debug\UserControlMembreEquipageDetail.pdb
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.csproj.AssemblyReference.cache
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.UCEquipageDetail.resources
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.csproj.GenerateResource.cache
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.csproj.CoreCompileInputs.cache
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.dll
+C:\Users\alexi\Documents\BUTINFO\A1\S2\NewSAE24\sae24\UserControlMembreEquipageDetail\UserControlMembreEquipageDetail\obj\Debug\UserControlMembreEquipageDetail.pdb

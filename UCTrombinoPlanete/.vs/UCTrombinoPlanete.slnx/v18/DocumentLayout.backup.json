@@ -1,0 +1,99 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\uctrombinoplanete\\usercontroltrombinoplanete.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|solutionrelative:uctrombinoplanete\\usercontroltrombinoplanete.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|c:\\users\\alexi\\documents\\butinfo\\a1\\s2\\saelabonne\\sae24_sans_lui\\sae24espoir2\\uctrombinoplanete\\uctrombinoplanete\\usercontroltrombinoplanete.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|solutionrelative:uctrombinoplanete\\usercontroltrombinoplanete.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\uctrombinoplanete\\usercontroltrombinoplanete.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}",
+      "RelativeMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|solutionrelative:uctrombinoplanete\\usercontroltrombinoplanete.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\uctrombinoplanete\\usercontroltrombinoplanete.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B9ECCE5-9ADC-4866-9CBC-F81BD2799AE2}|UCTrombinoPlanete\\UCTrombinoPlanete.csproj|solutionrelative:uctrombinoplanete\\usercontroltrombinoplanete.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserControlTrombinoPlanete.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.cs",
+              "RelativeDocumentMoniker": "UCTrombinoPlanete\\UserControlTrombinoPlanete.cs",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.cs [Design]",
+              "RelativeToolTip": "UCTrombinoPlanete\\UserControlTrombinoPlanete.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-24T11:23:32.227Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserControlTrombinoPlanete.resx",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.resx",
+              "RelativeDocumentMoniker": "UCTrombinoPlanete\\UserControlTrombinoPlanete.resx",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.resx",
+              "RelativeToolTip": "UCTrombinoPlanete\\UserControlTrombinoPlanete.resx",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2026-05-24T11:23:29.899Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UserControlTrombinoPlanete.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.Designer.cs",
+              "RelativeDocumentMoniker": "UCTrombinoPlanete\\UserControlTrombinoPlanete.Designer.cs",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.Designer.cs",
+              "RelativeToolTip": "UCTrombinoPlanete\\UserControlTrombinoPlanete.Designer.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-24T11:23:28.142Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserControlTrombinoPlanete.cs",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.cs",
+              "RelativeDocumentMoniker": "UCTrombinoPlanete\\UserControlTrombinoPlanete.cs",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\SAELABONNE\\sae24_sans_lui\\sae24espoir2\\UCTrombinoPlanete\\UCTrombinoPlanete\\UserControlTrombinoPlanete.cs",
+              "RelativeToolTip": "UCTrombinoPlanete\\UserControlTrombinoPlanete.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAA1wCkAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T19:33:31.5Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1908,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

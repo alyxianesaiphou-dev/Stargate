@@ -1,0 +1,8 @@
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\bin\Debug\UserControlBoutonIncrementer.dll
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\bin\Debug\UserControlBoutonIncrementer.pdb
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\obj\Debug\UserControlBoutonIncrementer.csproj.AssemblyReference.cache
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\obj\Debug\UserControlBoutonIncrementer.UCBoutonIncrementer.resources
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\obj\Debug\UserControlBoutonIncrementer.csproj.GenerateResource.cache
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\obj\Debug\UserControlBoutonIncrementer.csproj.CoreCompileInputs.cache
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\obj\Debug\UserControlBoutonIncrementer.dll
+C:\Users\andre\Documents\BUT INFO\S2\A21\sae24\UserControlBoutonIncrementer\UserControlBoutonIncrementer\obj\Debug\UserControlBoutonIncrementer.pdb

@@ -1,0 +1,65 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Samuel\\Desktop\\Alyxiane\\sae24\\UserControlMembreEquipage\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19B77A99-8A55-459D-9040-9C15B6100408}|UserControlMembreEquipage\\UserControlMembreEquipage.csproj|c:\\users\\samuel\\desktop\\alyxiane\\sae24\\usercontrolmembreequipage\\usercontrolmembreequipage\\usercontrolmembreequipage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19B77A99-8A55-459D-9040-9C15B6100408}|UserControlMembreEquipage\\UserControlMembreEquipage.csproj|solutionrelative:usercontrolmembreequipage\\usercontrolmembreequipage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\usercontrolmembreequipage\\usercontrol1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserControl1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.Designer.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.Designer.cs",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.Designer.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.Designer.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T18:34:28.981Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserControlMembreEquipage.cs",
+              "DocumentMoniker": "C:\\Users\\Samuel\\Desktop\\Alyxiane\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControlMembreEquipage.cs",
+              "RelativeDocumentMoniker": "UserControlMembreEquipage\\UserControlMembreEquipage.cs",
+              "ToolTip": "C:\\Users\\Samuel\\Desktop\\Alyxiane\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControlMembreEquipage.cs",
+              "RelativeToolTip": "UserControlMembreEquipage\\UserControlMembreEquipage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T18:34:08.762Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserControl1.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.cs",
+              "ToolTip": "C:\\Users\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.cs [Design]*",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\alexi\\Documents\\BUTINFO\\A1\\S2\\NewSAE24\\sae24\\UserControlMembreEquipage\\UserControlMembreEquipage\\UserControl1.cs [Design]*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T18:32:16.034Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

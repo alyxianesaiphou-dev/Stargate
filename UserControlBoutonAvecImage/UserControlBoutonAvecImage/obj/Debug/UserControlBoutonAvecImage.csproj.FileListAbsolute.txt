@@ -1,0 +1,9 @@
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\bin\Debug\UserControlBoutonAvecImage.dll
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\bin\Debug\UserControlBoutonAvecImage.pdb
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.csproj.AssemblyReference.cache
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.Properties.Resources.resources
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.UCBoutonImage.resources
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.csproj.GenerateResource.cache
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.csproj.CoreCompileInputs.cache
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.dll
+C:\BUTINFO\A1\S2\sae24\UserControlBoutonAvecImage\UserControlBoutonAvecImage\obj\Debug\UserControlBoutonAvecImage.pdb
