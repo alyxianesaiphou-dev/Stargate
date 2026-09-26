@@ -39,6 +39,8 @@ namespace Form_Sae24_Stargate
 
         private static readonly ConditionalWeakTable<Form, AdaptationEcran> adaptations = new ConditionalWeakTable<Form, AdaptationEcran>();
         private static readonly ConditionalWeakTable<Control, Etat> etats = new ConditionalWeakTable<Control, Etat>();
+        //contrôles que la fenêtre place elle-même en pixels réels (leurs enfants restent mis à l'échelle)
+        private static readonly ConditionalWeakTable<Control, object> placementsLibres = new ConditionalWeakTable<Control, object>();
 
         private readonly Form fenetre;
         private Size tailleDeBase;
@@ -77,6 +79,25 @@ namespace Form_Sae24_Stargate
             {
                 adaptations.Add(fenetre, new AdaptationEcran(fenetre));
             }
+        }
+
+        /// <summary>
+        /// La fenêtre place elle-même ce contrôle, en pixels réels (par exemple collé à un autre contrôle déjà
+        /// mis à l'échelle) : sa position et sa taille ne sont plus touchées, mais ses enfants restent mis à l'échelle
+        /// </summary>
+        public static void PlacementLibre(Control controle)
+        {
+            object marque;
+            if (!placementsLibres.TryGetValue(controle, out marque))
+            {
+                placementsLibres.Add(controle, new object());
+            }
+        }
+
+        private static bool EstLibre(Control controle)
+        {
+            object marque;
+            return placementsLibres.TryGetValue(controle, out marque);
         }
 
         /// <summary>
@@ -246,7 +267,7 @@ namespace Form_Sae24_Stargate
         private void PositionChangee(object sender, EventArgs e)
         {
             Control controle = (Control)sender;
-            if (enCours || controle.Dock != DockStyle.None || DansUneMiseEnPage(controle) || ParentDefilant(controle))
+            if (enCours || EstLibre(controle) || controle.Dock != DockStyle.None || DansUneMiseEnPage(controle) || ParentDefilant(controle))
             {
                 return;
             }
@@ -258,7 +279,7 @@ namespace Form_Sae24_Stargate
         private void TailleChangee(object sender, EventArgs e)
         {
             Control controle = (Control)sender;
-            if (enCours || controle.Dock != DockStyle.None || TailleAutomatique(controle))
+            if (enCours || EstLibre(controle) || controle.Dock != DockStyle.None || TailleAutomatique(controle))
             {
                 return;
             }
@@ -347,6 +368,11 @@ namespace Form_Sae24_Stargate
         {
             try
             {
+                if (EstLibre(controle))
+                {
+                    return;
+                }
+
                 //texte ; un panneau n'affiche pas de texte lui-même : il garde sa police d'origine, pour que
                 //les contrôles qu'on y ajoute plus tard ne soient pas agrandis deux fois
                 if (etat.Police != null)

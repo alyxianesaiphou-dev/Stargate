@@ -48,6 +48,8 @@ namespace Form_Sae24_Stargate
 
             //tout s'agrandit ou se réduit avec l'écran
             AdaptationEcran.Activer(this);
+            //la zone des cartes suit le cadre des filtres (après la mise à l'échelle)
+            this.Resize += delegate { PlacerCartes(); };
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -79,6 +81,8 @@ namespace Form_Sae24_Stargate
 
             //Instanciation objets flpAffichage et dtAlien
             flpAffichage = new FlowLayoutPanel();
+            //placée en pixels réels sous le cadre des filtres (voir PlacerCartes)
+            AdaptationEcran.PlacementLibre(flpAffichage);
 
             //Instanciation et remplissage dtAlien
             DataTable dtAlien = new DataTable();
@@ -118,7 +122,6 @@ namespace Form_Sae24_Stargate
 
             int gauche = 360;
             int droite = Math.Min(zone.Right, fenetre.Width - 20);
-            int bas = Math.Min(zone.Bottom, fenetre.Height - 20);
 
             filtres.Location = new System.Drawing.Point(gauche, zone.Top);
             filtres.Size = new System.Drawing.Size(droite - gauche, zoneFiltres.Height);
@@ -145,9 +148,28 @@ namespace Form_Sae24_Stargate
                 }
             }
 
-            int haut = zone.Top + zoneFiltres.Height + 8;
-            flpAffichage.Location = new System.Drawing.Point(gauche, haut);
-            flpAffichage.Size = new System.Drawing.Size(droite - gauche, bas - haut);
+            filtresActifs = filtres;
+            PlacerCartes();
+        }
+
+        //cadre des filtres affiché au-dessus des cartes (aliens ou planètes)
+        private GroupBox filtresActifs = null;
+
+        /// <summary>
+        /// Place la zone des cartes juste sous le cadre des filtres, exactement aussi large que lui,
+        /// et jusqu'en bas des statistiques sans sortir de la fenêtre. On part de la position réelle
+        /// du cadre à l'écran, pour que les cartes ne dépassent jamais, quel que soit l'écran.
+        /// </summary>
+        private void PlacerCartes()
+        {
+            if (flpAffichage == null || filtresActifs == null)
+            {
+                return;
+            }
+            float facteur = AdaptationEcran.Facteur(this);
+            int haut = filtresActifs.Bottom + (int)Math.Round(8 * facteur);
+            int bas = Math.Min(tabAffichage.Bottom, this.ClientSize.Height - (int)Math.Round(20 * facteur));
+            flpAffichage.Bounds = new System.Drawing.Rectangle(filtresActifs.Left, haut, filtresActifs.Width, Math.Max(0, bas - haut));
         }
 
         private void selectionnerBouton(UCBoutonImage btnSelect)
