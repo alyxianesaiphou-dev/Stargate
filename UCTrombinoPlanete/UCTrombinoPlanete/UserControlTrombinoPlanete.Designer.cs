@@ -117,7 +117,7 @@
             this.lblPlanete.Name = "lblPlanete";
             this.lblPlanete.Size = new System.Drawing.Size(146, 20);
             this.lblPlanete.TabIndex = 1;
-            this.lblPlanete.Text = "Nom Planeteeee";
+            this.lblPlanete.Text = "Nom Planète";
             this.lblPlanete.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // picPlanete

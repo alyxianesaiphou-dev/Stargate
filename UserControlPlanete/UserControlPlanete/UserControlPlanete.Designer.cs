@@ -66,7 +66,7 @@
             this.lblGravite.Name = "lblGravite";
             this.lblGravite.Size = new System.Drawing.Size(74, 25);
             this.lblGravite.TabIndex = 5;
-            this.lblGravite.Text = "Gravite";
+            this.lblGravite.Text = "Gravité";
             // 
             // lblTemperature
             // 
@@ -79,7 +79,7 @@
             this.lblTemperature.Name = "lblTemperature";
             this.lblTemperature.Size = new System.Drawing.Size(124, 25);
             this.lblTemperature.TabIndex = 3;
-            this.lblTemperature.Text = "Temperature";
+            this.lblTemperature.Text = "Température";
             // 
             // lblPlanete
             // 
@@ -91,7 +91,7 @@
             this.lblPlanete.Name = "lblPlanete";
             this.lblPlanete.Size = new System.Drawing.Size(216, 38);
             this.lblPlanete.TabIndex = 1;
-            this.lblPlanete.Text = "Nom Planete";
+            this.lblPlanete.Text = "Nom Planète";
             this.lblPlanete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // picPlanete

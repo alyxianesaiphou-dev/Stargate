@@ -97,7 +97,7 @@
             this.lblRetour.Name = "lblRetour";
             this.lblRetour.Size = new System.Drawing.Size(173, 25);
             this.lblRetour.TabIndex = 10;
-            this.lblRetour.Text = "Date retour prévu :";
+            this.lblRetour.Text = "Date retour prévue :";
             // 
             // lblDepart
             // 
@@ -160,7 +160,7 @@
             this.lblDateRetour.Name = "lblDateRetour";
             this.lblDateRetour.Size = new System.Drawing.Size(162, 25);
             this.lblDateRetour.TabIndex = 3;
-            this.lblDateRetour.Text = "Date retour prévu";
+            this.lblDateRetour.Text = "Date retour prévue";
             // 
             // lblDateDepart
             // 

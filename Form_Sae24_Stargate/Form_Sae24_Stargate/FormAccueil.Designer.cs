@@ -186,7 +186,7 @@
             this.lblFiltrePlanete.Name = "lblFiltrePlanete";
             this.lblFiltrePlanete.Size = new System.Drawing.Size(75, 20);
             this.lblFiltrePlanete.TabIndex = 20;
-            this.lblFiltrePlanete.Text = "Planete :";
+            this.lblFiltrePlanete.Text = "Planète :";
             // 
             // btnSupprimerFiltre
             // 
@@ -703,7 +703,7 @@
             this.lblTab3nbMission.Name = "lblTab3nbMission";
             this.lblTab3nbMission.Size = new System.Drawing.Size(420, 29);
             this.lblTab3nbMission.TabIndex = 1;
-            this.lblTab3nbMission.Text = "Nombre de missions par planètes :";
+            this.lblTab3nbMission.Text = "Nombre de missions par planète :";
             // 
             // graphMissionPlanetes
             // 
@@ -739,7 +739,7 @@
             this.graphMissionPlanetes.Series.Add(series1);
             this.graphMissionPlanetes.Size = new System.Drawing.Size(1372, 469);
             this.graphMissionPlanetes.TabIndex = 0;
-            this.graphMissionPlanetes.Text = "Nombre de missions par planètes";
+            this.graphMissionPlanetes.Text = "Nombre de missions par planète";
             // 
             // tab2
             // 

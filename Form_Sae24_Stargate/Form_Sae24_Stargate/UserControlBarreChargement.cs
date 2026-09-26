@@ -12,7 +12,7 @@ namespace Form_Sae24_Stargate
 {
     public partial class UserControlBarreChargement : UserControl
     {
-        //sert a prevnir que c'est fini
+        //sert à prévenir que c'est fini
         public event EventHandler ChargementTermine;
         public UserControlBarreChargement()
         {
@@ -43,7 +43,7 @@ namespace Form_Sae24_Stargate
                 //la barre est pleine, on stop le chrono.
                 timerChargement.Stop();
 
-                //on previent la fenetre parent
+                //on prévient la fenêtre parent
                 ChargementTermine?.Invoke(this, EventArgs.Empty);
             }
         }

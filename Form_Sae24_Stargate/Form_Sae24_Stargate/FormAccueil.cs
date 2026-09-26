@@ -35,7 +35,7 @@ namespace Form_Sae24_Stargate
         //flpAffichage partagé par trombinoAlien et trombinoPlanete
         private FlowLayoutPanel flpAffichage;
 
-        //UCBtn permettant de savoir quel bouton est séléctionné et le colorer
+        //UCBtn permettant de savoir quel bouton est sélectionné et le colorer
         private UCBoutonImage btnActif = null;
 
         public FormAccueil()
@@ -102,13 +102,13 @@ namespace Form_Sae24_Stargate
         /// <param name="btnSelect"></param>
         private void selectionnerBouton(UCBoutonImage btnSelect)
         {
-            //Si il y a un bouton sélectionné, on remets sa couleur
+            //S'il y a un bouton sélectionné, on remet sa couleur
             if (btnActif != null)
             {
                 btnActif.retablirCouleur();
             }
 
-            //Changer la couleur du bouton séléctionné
+            //Changer la couleur du bouton sélectionné
             btnSelect.changerCouleur();
 
             //Garder en mémoire le bouton sélectionné (btnActif : variable globale)
@@ -127,9 +127,9 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void clickTableauDeBord(object sender, EventArgs e)
         {
-            //Cast de l'object sender en "Control"
+            //Cast de l'objet sender en "Control"
             //On doit caster en "Control" et pas en UCBoutonImage parce que sender est l’objet EXACT qui a déclenché l’événement
-            //Ici, l'évenement est le click sur boutonImage ou lblImage ou pictureBox
+            //Ici, l'événement est le click sur boutonImage ou lblImage ou pictureBox
             Control btn = (Control)sender;
             //Récupération du UserControl parent
             UCBoutonImage btnImage = (UCBoutonImage)btn.Parent;
@@ -169,17 +169,17 @@ namespace Form_Sae24_Stargate
                 DataRow ligne = MesDatas.DsGlobal.Tables["Mission"].Rows[i];
                 string filtreChefMission = "matricule = '" + ligne[5].ToString() + "'";
 
-                //Récuperer le nom du chef à partir du matricule
+                //Récupérer le nom du chef à partir du matricule
                 DataRow[] tabMembre = MesDatas.DsGlobal.Tables["Membre"].Select(filtreChefMission);
                 string nomChef = tabMembre[0][1].ToString() + " " + tabMembre[0][2].ToString();
 
                 //Nouvel objet mission
                 UCMission mission = new UCMission(ligne[0].ToString(), ligne[1].ToString(), ligne[3].ToString(), ligne[4].ToString(), nomChef, ligne[8].ToString() + "€");
 
-                //Associer le délegate au nouvel objet mission pour que le bouton 'détail' soit fonctionnel
+                //Associer le délégué au nouvel objet mission pour que le bouton 'détail' soit fonctionnel
                 mission.afficher = clickDetailMission;
 
-                //Ajout des usercontrol mission dans le flp correspondant à leur statut (en cours, terminee, a venir)
+                //Ajout des usercontrol mission dans le flp correspondant à leur statut (en cours, terminée, à venir)
                 if (mission.statutMission == "En cours")
                 {
                     flpMissionEnCours.Controls.Add(mission);
@@ -356,7 +356,7 @@ namespace Form_Sae24_Stargate
 
             for (int i = 0; i < MesDatas.DsGlobal.Tables["Espece"].Rows.Count; i++)
             {
-                //Pour chaque espece dans table Espece, on récupère la ligne
+                //Pour chaque espèce dans table Espece, on récupère la ligne
                 DataRow ligneEspece = MesDatas.DsGlobal.Tables["Espece"].Rows[i];
                 string idEspece = ligneEspece[0].ToString();
                 string nom = ligneEspece[1].ToString();
@@ -392,7 +392,7 @@ namespace Form_Sae24_Stargate
                     typeArme = tabEnnemi[0][1].ToString();
                 }
 
-                //Filtre sur quelles planetes sont idEspece
+                //Filtre sur quelles planètes sont idEspece
                 DataRow[] tabPlanete = MesDatas.DsGlobal.Tables["Habiter"].Select(filtre);
                 string planete = "";
 
@@ -433,7 +433,7 @@ namespace Form_Sae24_Stargate
 
         /// <summary>
         /// Remplit de UCTrombinoAlien un flowLayoutPanel donné avec une table donnée
-        /// Permet de selectionner une table filtré, ainsi que soit le flp du bouton découverte alien, soit celui de détail planètes
+        /// Permet de sélectionner une table filtrée, ainsi que soit le flp du bouton découverte alien, soit celui de détail planètes
         /// </summary>
         /// <param name="table"></param>
         /// <param name="flp"></param>
@@ -448,9 +448,9 @@ namespace Form_Sae24_Stargate
 
             foreach (DataRow dr in table.Rows)
             {
-                //Crée un objet UCTrombinoExtraterrestre avec les donnees de la dataTable
+                //Crée un objet UCTrombinoExtraterrestre avec les données de la dataTable
                 UCTrombinoExtraterrestre alien = new UCTrombinoExtraterrestre(dr[1].ToString(), dr[2].ToString(), dr[3].ToString(), dr[9].ToString());
-                //Associer le délegate au nouvel objet UCTrombinoExtraterrestre pour que le click soit fonctionnel
+                //Associer le délégué au nouvel objet UCTrombinoExtraterrestre pour que le click soit fonctionnel
                 alien.afficheur = clickDetailAlien;
                 //Ajout au flp
                 flp.Controls.Add(alien);
@@ -461,7 +461,7 @@ namespace Form_Sae24_Stargate
 
         /// <summary>
         /// Méthode appelée par le delegate afficheur lors de l'appui sur le bouton "découverte des aliens
-        /// Affiche le trombinoscope des aliens sans filtre appliqués, ainsi que le groupBox filtres 
+        /// Affiche le trombinoscope des aliens sans filtre appliqué, ainsi que le groupBox filtres 
         /// Les UserControl UCTrombinoExtraterrestres sont ajoutés dans le flpAffichage via la méthode flpAffichageTrombinoAlien
         /// </summary>
         /// <param name="sender"></param>
@@ -470,7 +470,7 @@ namespace Form_Sae24_Stargate
         {
             Control btn = (Control)sender;
             UCBoutonImage btnImage = (UCBoutonImage)btn.Parent;
-            //Selectionne ce bouton comme bouton actif
+            //Sélectionne ce bouton comme bouton actif
             selectionnerBouton(btnImage);
 
             //Gestion de l'affichage
@@ -493,7 +493,7 @@ namespace Form_Sae24_Stargate
 
             foreach (DataRow dr in MesDatas.DsGlobal.Tables["Planete"].Rows)
             {
-                //Compléter la comboBox de filtre planete par ordre alphabétique
+                //Compléter la comboBox de filtre planète par ordre alphabétique
                 if (!cboFiltrePlanete.Items.Contains(dr["nom"].ToString()))
                 {
                     cboFiltrePlanete.Items.Add(dr["nom"].ToString());
@@ -501,7 +501,7 @@ namespace Form_Sae24_Stargate
                 }
             }
 
-            //Pamamètres du flpAffichage comprenant les usercontrol
+            //Paramètres du flpAffichage comprenant les usercontrol
             this.grpFiltre.Location = new System.Drawing.Point(360, 29);
             flpAffichage.Visible = true;
             flpAffichage.AutoScroll = true;
@@ -550,7 +550,7 @@ namespace Form_Sae24_Stargate
             }
             if (!ckbFiltreAllie.Checked)
             {
-                //Massqe les filtres si Alliés non checked
+                //Masque les filtres si Alliés non checked
                 gpbFiltreAllie.Visible = false;
             }
         }
@@ -587,7 +587,7 @@ namespace Form_Sae24_Stargate
             }
             if (!ckbFiltreEnnemi.Checked)
             {
-                //Massqe les filtres si Ennemis non checked
+                //Masque les filtres si Ennemis non checked
                 gpbFiltreEnnemi.Visible = false;
             }
         }
@@ -722,7 +722,7 @@ namespace Form_Sae24_Stargate
                 //Recherche filtrée dans la table dtAlien
                 DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtAlien"].Select(filtreFinal);
 
-                //Si il y a des aliens qui correspondent au filtre
+                //S'il y a des aliens qui correspondent au filtre
                 if (rowResultat.Length > 0)
                 {
                     DataTable dtFiltre = rowResultat.CopyToDataTable();
@@ -732,8 +732,8 @@ namespace Form_Sae24_Stargate
                 //Si aucun alien ne correspond au filtre
                 else
                 {
-                    //Ajout dun label "aucun alien correspondant"
-                    MessageBox.Show("pas d'alien avec ces filtres");
+                    //Ajout d'un label "aucun alien correspondant"
+                    MessageBox.Show("Pas d'alien avec ces filtres");
                     Label lblAucunResultatFiltre = new System.Windows.Forms.Label();
                     lblAucunResultatFiltre.AutoSize = true;
                     lblAucunResultatFiltre.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -838,7 +838,7 @@ namespace Form_Sae24_Stargate
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                //Pour chaque planete dans table Planete, on récupère la ligne
+                //Pour chaque planète dans table Planete, on récupère la ligne
                 DataRow lignePlanete = dt.Rows[i];
                 string nomPlanete = lignePlanete[0].ToString();
                 string temperature;
@@ -866,9 +866,9 @@ namespace Form_Sae24_Stargate
                 {
                     dataBaz = "?";
                 }
-                //Crée un objet UCTrombPlanete avec les donnees de la dataTable
+                //Crée un objet UCTrombPlanete avec les données de la dataTable
                 UCTrombPlanete planete = new UCTrombPlanete(nomPlanete, temperature, gravite, dataBaz);
-                //Associer le délegate au nouvel objet UCTrombPlanete pour que le click soit fonctionnel
+                //Associer le délégué au nouvel objet UCTrombPlanete pour que le click soit fonctionnel
                 planete.afficheur = clickDetailPlanete;
                 //Ajout au flpAffichage
                 flpAffichage.Controls.Add(planete);
@@ -878,8 +878,8 @@ namespace Form_Sae24_Stargate
         /****************************************************************************************************************************************************************************/
 
         /// <summary>
-        /// Méthode appelée par le delegate afficheur lors de l'appui sur le bouton "découverte des planetes
-        /// Affiche le trombinoscope des planetes sans filtre appliqués, ainsi que le groupBox filtres 
+        /// Méthode appelée par le delegate afficheur lors de l'appui sur le bouton "découverte des planètes
+        /// Affiche le trombinoscope des planètes sans filtre appliqué, ainsi que le groupBox filtres 
         /// Les UserControl UCTrombPlanete sont ajoutés dans le flpAffichage via la méthode flpAffichageTrombinoPlanetes
         /// </summary>
         /// <param name="sender"></param>
@@ -888,7 +888,7 @@ namespace Form_Sae24_Stargate
         {
             Control btn = (Control)sender;
             UCBoutonImage btnImage = (UCBoutonImage)btn.Parent;
-            //Selectionne ce bouton comme bouton actif
+            //Sélectionne ce bouton comme bouton actif
             selectionnerBouton(btnImage);
 
             //Gestion de l'affichage
@@ -898,13 +898,13 @@ namespace Form_Sae24_Stargate
             grpFiltre.Visible = false;
             grpFiltrePlanete.Visible = true;
 
-            //Bloque les raccourcis claavier dans les txtBox de filtres
+            //Bloque les raccourcis clavier dans les txtBox de filtres
             txtTempMin.ShortcutsEnabled = false;
             txtTempMax.ShortcutsEnabled = false;
             txtGraviteMin.ShortcutsEnabled = false;
             txtGraviteMax.ShortcutsEnabled = false;
 
-            //Pamamètres du flpAffichage comprenant les usercontrol
+            //Paramètres du flpAffichage comprenant les usercontrol
             this.grpFiltrePlanete.Location = new System.Drawing.Point(360, 29);
             flpAffichage.Visible = true;
             flpAffichage.AutoScroll = true;
@@ -923,7 +923,7 @@ namespace Form_Sae24_Stargate
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Affiche les détails de la planete (missions effectuées, races présentes...) dans un nouveau form après un click sur un UCTrombPlanetes
+        /// Affiche les détails de la planète (missions effectuées, races présentes...) dans un nouveau form après un click sur un UCTrombPlanetes
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -932,10 +932,10 @@ namespace Form_Sae24_Stargate
             Control btn = (Control)sender;
             UCTrombPlanete planete = (UCTrombPlanete)btn.Parent;
 
-            //Créer le filtre avec le nom de la planete du UCTrombPlanete
+            //Créer le filtre avec le nom de la planète du UCTrombPlanete
             String filtre = "nom = '" + planete.getNomPlanete() + "'";
 
-            //Récupérer la ligne de la planete dans dtPlanete
+            //Récupérer la ligne de la planète dans dtPlanete
             DataRow[] r = MesDatas.DsGlobal.Tables["dtPlanetes"].Select(filtre);
 
             //Gestion des valeurs "null"
@@ -977,30 +977,30 @@ namespace Form_Sae24_Stargate
             lblAucunResultatAlien.Name = "lblAucunResultatFiltre";
             lblAucunResultatAlien.Size = new System.Drawing.Size(580, 36);
 
-            //Remplir le flp des especes présentes sur la planète
+            //Remplir le flp des espèces présentes sur la planète
             string filtreEspece = "planete like '%" + planeteDetail.nomPlanete + "%'";
-            //Récupere les especes présentes sur la planète
+            //Récupère les espèces présentes sur la planète
             DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtAlien"].Select(filtreEspece);
-            //Si il y a des especes
+            //S'il y a des espèces
             if (rowResultat.Length > 0)
             {
                 DataTable dtFiltre = rowResultat.CopyToDataTable();
                 foreach (DataRow dr in dtFiltre.Rows)
                 {
                     string filtrePourcentage = "idEspece = '" + dr[0].ToString() + "' AND nomPlanete = '" + planeteDetail.nomPlanete + "'";
-                    //Récuperer les pourcentages des espèces
+                    //Récupérer les pourcentages des espèces
                     DataRow[] rowPourcentage = MesDatas.DsGlobal.Tables["Habiter"].Select(filtrePourcentage);
                     string pourcentage = "Présence : " + rowPourcentage[0][2].ToString() + "%";
 
                     //Instancier nouvel objet UCTrombinoExtraterrestre avec le pourcentage
                     UCTrombinoExtraterrestre alien = new UCTrombinoExtraterrestre(dr[1].ToString(), dr[2].ToString(), dr[3].ToString(), pourcentage);
-                    //Associer le délegate au nouvel objet UCTrombinoExtraterrestre pour que le click soit fonctionnel
+                    //Associer le délégué au nouvel objet UCTrombinoExtraterrestre pour que le click soit fonctionnel
                     alien.afficheur = clickDetailAlien;
                     //Ajout au flpRaces du UCPlaneteDétail
                     planeteDetail.getFLPRaces.Controls.Add(alien);
                 }
             }
-            //Pas d'espece sur cette planete
+            //Pas d'espèce sur cette planète
             else
             {
                 //Affichage du label dans le flpRaces du UCPlaneteDétail
@@ -1011,13 +1011,13 @@ namespace Form_Sae24_Stargate
             //Remplir le flp des missions sur la planète
             string filtreMission = "nomPlanete like '%" + planeteDetail.nomPlanete + "%'";
             DataRow[] rowResultatMission = MesDatas.DsGlobal.Tables["Mission"].Select(filtreMission);
-            //Si il y a ue des missions
+            //S'il y a eu des missions
             if (rowResultatMission.Length > 0)
             {
                 DataTable dtFiltreMission = rowResultatMission.CopyToDataTable();
                 for (int i = 0; i < dtFiltreMission.Rows.Count; i++)
                 {
-                    //Récuperer le nom du chef de mission
+                    //Récupérer le nom du chef de mission
                     DataRow ligne = dtFiltreMission.Rows[i];
                     string filtreChefMission = "matricule = '" + ligne[5].ToString() + "'";
 
@@ -1026,7 +1026,7 @@ namespace Form_Sae24_Stargate
 
                     //Instancier nouvel objet UCTrombinoExtraterrestre
                     UCMission mission = new UCMission(ligne[0].ToString(), ligne[1].ToString(), ligne[3].ToString(), ligne[4].ToString(), nomChef, ligne[8].ToString() + "€");
-                    //Associer le délegate au nouvel objet mission pour que le bouton 'détail' soit fonctionnel
+                    //Associer le délégué au nouvel objet mission pour que le bouton 'détail' soit fonctionnel
                     mission.afficher = clickDetailMission;
                     //Ajout au flpMission du UCPlaneteDétail
                     planeteDetail.getFLPMission.Controls.Add(mission);
@@ -1168,17 +1168,17 @@ namespace Form_Sae24_Stargate
                 //Recherche filtrée dans la table dtPlanetes
                 DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtPlanetes"].Select(filtreFinal);
 
-                //Si il y a des planetes qui correspondent au filtre
+                //S'il y a des planètes qui correspondent au filtre
                 if (rowResultat.Length > 0)
                 {
                     DataTable dtFiltre = rowResultat.CopyToDataTable();
-                    //Affichage des planetes
+                    //Affichage des planètes
                     flpAffichageTrombinoPlanetes(dtFiltre);
                 }
                 //Si aucune planète ne correspond au filtre
                 else
                 {
-                    //Ajout dun label "aucune planete correspondant"
+                    //Ajout d'un label "aucune planète correspondant"
                     Label lblAucunResultatFiltre = new System.Windows.Forms.Label();
                     lblAucunResultatFiltre.AutoSize = true;
                     lblAucunResultatFiltre.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
@@ -1188,7 +1188,7 @@ namespace Form_Sae24_Stargate
                     lblAucunResultatFiltre.Size = new System.Drawing.Size(580, 36);
                     lblAucunResultatFiltre.Text = "Aucune planète correspondant à ces filtres";
 
-                    //Aucune planete dans flpAffichage
+                    //Aucune planète dans flpAffichage
                     flpAffichage.Controls.Clear();
 
                     //Ajout du label
@@ -1199,14 +1199,14 @@ namespace Form_Sae24_Stargate
             //Si clic 'Appliquer' sans bouton sélectionné
             else
             {
-                //Affichage de la totalité des planetes
+                //Affichage de la totalité des planètes
                 flpAffichageTrombinoPlanetes(MesDatas.DsGlobal.Tables["dtPlanetes"]);
             }
         }
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Vide les filtres du grpBox filtres Planètes et affiche la totalité des planetes
+        /// Vide les filtres du grpBox filtres Planètes et affiche la totalité des planètes
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1221,7 +1221,7 @@ namespace Form_Sae24_Stargate
             ckbDataBazInconnu.Checked = false;
             ckbPDataBaz.Checked = false;
 
-            //Affichage de la totalité des planetes
+            //Affichage de la totalité des planètes
             flpAffichageTrombinoPlanetes(MesDatas.DsGlobal.Tables["dtPlanetes"]);
         }
 
@@ -1283,13 +1283,13 @@ namespace Form_Sae24_Stargate
                 e.Handled = true;
             }
 
-            //Si y'a une virgule bool a true
+            //S'il y a une virgule bool à true
             contientVirgule = txtGraviteMin.Text.Contains('.');
 
             //Si le caractère est une virgule
             if (e.KeyChar == '.')
             {
-                //déja une virgule
+                //déjà une virgule
                 if (contientVirgule)
                 {
                     //Pas le droit d'écrire
@@ -1310,7 +1310,7 @@ namespace Form_Sae24_Stargate
                 //Remplacer point par virgule
                 e.KeyChar = '.';
 
-                //déja une virgule
+                //déjà une virgule
                 if (contientVirgule)
                 {
                     //Pas le droit d'écrire
@@ -1346,13 +1346,13 @@ namespace Form_Sae24_Stargate
                 e.Handled = true;
             }
 
-            //Si y'a une virgule bool a true
+            //S'il y a une virgule bool à true
             contientVirgule = txtGraviteMax.Text.Contains('.');
 
             //Si le caractère est une virgule
             if (e.KeyChar == '.')
             {
-                //déja une virgule
+                //déjà une virgule
                 if (contientVirgule)
                 {
                     //Pas le droit d'écrire
@@ -1373,7 +1373,7 @@ namespace Form_Sae24_Stargate
                 //Remplacer point par virgule
                 e.KeyChar = '.';
 
-                //déja une virgule
+                //déjà une virgule
                 if (contientVirgule)
                 {
                     //Pas le droit d'écrire
@@ -1401,9 +1401,9 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void clickStatistiques(object sender, EventArgs e)
         {
-            //Cast de l'object sender en "Control"
+            //Cast de l'objet sender en "Control"
             //On doit caster en "Control" et pas en UCBoutonImage parce que sender est l’objet EXACT qui a déclenché l’événement
-            //Ici, l'évenement est le click sur boutonImage ou lblImage ou pictureBox
+            //Ici, l'événement est le click sur boutonImage ou lblImage ou pictureBox
             Control btn = (Control)sender;
             //Récupération du UserControl parent
             UCBoutonImage btnImage = (UCBoutonImage)btn.Parent;
@@ -1431,7 +1431,7 @@ namespace Form_Sae24_Stargate
 
             //Tab 3 : Pour chaque planète, indiquer le nombre de missions qui y ont déjà eu lieu.
 
-            //Eviter les doublons de jeu de données
+            //Éviter les doublons de jeu de données
             graphMissionPlanetes.Series.Clear();
 
             //Remplir les données du graphique
@@ -1440,7 +1440,7 @@ namespace Form_Sae24_Stargate
             //Type de graph : histogramme
             donnees.ChartType = SeriesChartType.Column;
 
-            //Caacher la légende du graphique
+            //Cacher la légende du graphique
             donnees.IsVisibleInLegend = false;
 
             //Afficher les valeurs au dessus des colonnes et en blanc

@@ -1,0 +1,21 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# macOS
+.DS_Store
+
+# Build output
+[Oo]bj/
+**/[Bb]in/**
+# Keep bin/ folders traversable so the exceptions below can apply
+!**/[Bb]in/**/
+
+# The app loads its images and database from bin/Debug at runtime
+!/Form_Sae24_Stargate/Form_Sae24_Stargate/bin/Debug/Images/**
+!/Form_Sae24_Stargate/Form_Sae24_Stargate/bin/Debug/Stargate.db
+
+# The app references the user-control DLLs from their bin/Debug folders
+!/UserControl*/*/bin/Debug/*.dll
+!/UCTrombinoPlanete/*/bin/Debug/*.dll

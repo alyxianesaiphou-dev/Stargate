@@ -46,7 +46,7 @@ namespace Form_Sae24_Stargate
                 if (resultat == DBNull.Value || resultat == null)
                 {
                     //login inconnu : même message que pour un mauvais mot de passe
-                    MessageBox.Show("Echec de l'authentification", "Accès refusé");
+                    MessageBox.Show("Échec de l'authentification", "Accès refusé");
                     txtMdp.Clear();
                     txtLogin.Focus();
                 }
@@ -62,7 +62,7 @@ namespace Form_Sae24_Stargate
                     }
                     else
                     {
-                        MessageBox.Show("Echec de l'authentification", "Accès refusé");
+                        MessageBox.Show("Échec de l'authentification", "Accès refusé");
                         txtMdp.Clear();
                         txtMdp.Focus();
                     }

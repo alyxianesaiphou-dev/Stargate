@@ -27,7 +27,7 @@ namespace UserControlPlanete
         public UCPlaneteDetail(string nomPlanete, string temp, string gravite, string dtb)
         {
             InitializeComponent();
-            //Récûperer le chemin pour les images sur chaque pc
+            //Récupérer le chemin pour les images sur chaque pc
             string cheminPlanete = @"Images\Planetes\" + nomPlanete + ".png";
 
             picPlanete.Image = Image.FromFile(cheminPlanete);

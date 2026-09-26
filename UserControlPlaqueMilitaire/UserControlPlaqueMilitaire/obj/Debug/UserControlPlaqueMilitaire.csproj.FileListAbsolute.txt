@@ -1,9 +1,0 @@
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\bin\Debug\UserControlPlaqueMilitaire.dll
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\bin\Debug\UserControlPlaqueMilitaire.pdb
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.csproj.AssemblyReference.cache
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.Properties.Resources.resources
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.UCPlaqueMilitaire.resources
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.csproj.GenerateResource.cache
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.csproj.CoreCompileInputs.cache
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.dll
-C:\BUTINFO\A1\S2\sae24\UserControlPlaqueMilitaire\UserControlPlaqueMilitaire\obj\Debug\UserControlPlaqueMilitaire.pdb

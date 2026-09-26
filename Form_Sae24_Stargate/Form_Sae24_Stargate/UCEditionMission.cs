@@ -45,7 +45,7 @@ namespace Form_Sae24_Stargate
 
                 readerInf.Close();
 
-                //type depense
+                //type dépense
                 SQLiteCommand cmdType = new SQLiteCommand("SELECT * FROM TypeDepense WHERE id <> 2", maConnexion);
                 SQLiteDataReader readerType = cmdType.ExecuteReader();
 
@@ -59,11 +59,9 @@ namespace Form_Sae24_Stargate
 
                 readerType.Close();
 
-                //espece ennemie (captures)
+                //espèces capturables : toutes, alliées comme ennemies
                 SQLiteCommand cmdEsp = new SQLiteCommand(
-                    @"SELECT Ennemi.idEspece, Espece.nom
-                      FROM Ennemi JOIN Espece ON Espece.id = Ennemi.idEspece
-                      ORDER BY Espece.nom", maConnexion);
+                    "SELECT id AS idEspece, nom FROM Espece ORDER BY nom", maConnexion);
                 SQLiteDataReader readerEsp = cmdEsp.ExecuteReader();
 
                 DataTable dtEsp = new DataTable();
@@ -551,7 +549,7 @@ namespace Form_Sae24_Stargate
         {
             try
             {
-                //verifie que l'utilisateur a mis plus que 0
+                //vérifie que l'utilisateur a mis plus que 0
                 if (cmbEspece.SelectedValue == null || nudNombreCapture.Value <= 0)
                 {
                     FormSucces.Afficher("Veuillez sélectionner une espèce et un nombre supérieur à 0.", true);

@@ -75,7 +75,7 @@
             this.lblArmeouIntrument.Name = "lblArmeouIntrument";
             this.lblArmeouIntrument.Size = new System.Drawing.Size(124, 20);
             this.lblArmeouIntrument.TabIndex = 12;
-            this.lblArmeouIntrument.Text = "Arme/Intrument";
+            this.lblArmeouIntrument.Text = "Arme/Instrument";
             // 
             // lblPlanete
             // 
@@ -85,7 +85,7 @@
             this.lblPlanete.Name = "lblPlanete";
             this.lblPlanete.Size = new System.Drawing.Size(65, 20);
             this.lblPlanete.TabIndex = 11;
-            this.lblPlanete.Text = "Planete";
+            this.lblPlanete.Text = "Planète";
             // 
             // lblStatut
             // 
