@@ -39,6 +39,9 @@ namespace Form_Sae24_Stargate
         public FormAccueil()
         {
             InitializeComponent();
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         private void Form1_Load(object sender, EventArgs e)

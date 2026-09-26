@@ -41,6 +41,9 @@ namespace Form_Sae24_Stargate
             ChargerPlanetes();
             InitialiserPopupCapture();
 
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
+
             //Visible ne vaut true qu'une fois la fenêtre affichée : on grise les boutons à ce moment-là
             this.Shown += delegate { MettreAJourBoutons(); };
 
@@ -705,7 +708,10 @@ namespace Form_Sae24_Stargate
         {
             alienEnCoursDeSaisie = (CarteAlien)sender;
 
-            pnlSaisieQuantite.Location = new Point((this.Width - pnlSaisieQuantite.Width) / 2,(this.Height - pnlSaisieQuantite.Height) / 2);
+            //centrée dans la fenêtre (positions d'origine, AdaptationEcran les met à l'échelle)
+            Size zone = AdaptationEcran.TailleDeBase(this);
+            Size taillePopup = AdaptationEcran.TailleDeBase(pnlSaisieQuantite);
+            pnlSaisieQuantite.Location = new Point((zone.Width - taillePopup.Width) / 2, (zone.Height - taillePopup.Height) / 2);
 
             pnlSaisieQuantite.BringToFront();
             pnlSaisieQuantite.Visible = true;

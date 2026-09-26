@@ -25,6 +25,9 @@ namespace Form_Sae24_Stargate
             txtMdp.UseSystemPasswordChar = true;
 
             //picOeil.Image = Image.FromFile(@"Images\Icones\oeil.png");
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         private void FormAuthentification_Load(object sender, EventArgs e)
