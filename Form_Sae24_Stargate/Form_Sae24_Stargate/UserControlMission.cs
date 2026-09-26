@@ -49,11 +49,12 @@ namespace UserControlMission
             grpMission.Text = nomPlanete + numeroMission;
             DateTime Depart = Convert.ToDateTime(dateDépart);
             DateTime Retour = Convert.ToDateTime(dateRetour);
-            if (DateTime.Now < Depart)
+            //On compare les jours (sans l'heure) : le jour du retour, la mission est encore en cours
+            if (DateTime.Today < Depart.Date)
             {
                 lblStatusMission.Text = "À venir";
             }
-            else if (DateTime.Now < Retour)
+            else if (DateTime.Today <= Retour.Date)
             {
                 lblStatusMission.Text = "En cours";
             }
