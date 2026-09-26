@@ -121,18 +121,27 @@ namespace Form_Sae24_Stargate
         private void AfficherTrombinoEquipe(int numeroMission, string planete)
         {
             flptrombi.Controls.Clear();
+            flptrombi.BackColor = CarteMembre.CouleurTrombinoscope;
+            CarteMembre.CentrerColonnes(flptrombi);
 
             try
             {
                 SQLiteConnection maConnexion = Connexion.Connec;
 
-                string requeteSQL = @"SELECT Membre.matricule, Membre.nom, Membre.prenom
+                //le chef est affiché en premier, puis les autres membres par ordre alphabétique
+                string requeteSQL = @"SELECT Membre.matricule, Membre.nom, Membre.prenom,
+                                            (Membre.matricule = Mission.matriculeChef) AS estChef
                                         FROM Composer
                                         INNER JOIN Membre ON Composer.matriculeMembre = Membre.matricule
-                                        WHERE Composer.numeroMission = " + numeroMission + @"
-                                        AND Composer.nomPlanete = '" + planete + "'";
+                                        INNER JOIN Mission ON Composer.nomPlanete = Mission.nomPlanete
+                                            AND Composer.numeroMission = Mission.numero
+                                        WHERE Composer.numeroMission = @numero
+                                        AND Composer.nomPlanete = @planete
+                                        ORDER BY estChef DESC, Membre.nom";
 
                 SQLiteCommand commande = new SQLiteCommand(requeteSQL, maConnexion);
+                commande.Parameters.AddWithValue("@numero", numeroMission);
+                commande.Parameters.AddWithValue("@planete", planete);
 
                 SQLiteDataReader lecteur = commande.ExecuteReader();
 
@@ -140,12 +149,9 @@ namespace Form_Sae24_Stargate
                 {
                     string matricule = lecteur["matricule"].ToString();
                     string nom = lecteur["nom"].ToString() + " " + lecteur["prenom"].ToString();
+                    bool estChef = Convert.ToInt32(lecteur["estChef"]) == 1;
 
-                    UserControlCarteMembre carte = new UserControlCarteMembre();
-
-                    carte.RemplirInfos(matricule, nom);
-
-                    flptrombi.Controls.Add(carte);
+                    flptrombi.Controls.Add(new CarteMembre(matricule, nom, estChef));
                 }
 
                 lecteur.Close();
