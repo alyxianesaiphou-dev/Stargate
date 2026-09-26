@@ -19,21 +19,24 @@ namespace Form_Sae24_Stargate
         private string dateRetour;
         private string matriculeChef;
 
-        private ListBox lstEquipage;
-        private ListBox lstDisponibles;
+        private FlowLayoutPanel flpEquipage;
+        private FlowLayoutPanel flpDisponibles;
+        private Label lblEquipage;
+        private Label lblDisponibles;
         private Label lblResume;
 
-        //un membre affiché dans une des deux listes
+        //cartes cliquées (entourées en rose) en attente d'être ajoutées ou retirées
+        private HashSet<Panel> cartesSelectionnees = new HashSet<Panel>();
+
+        private static readonly Color couleurCadre = Color.DarkSlateBlue;
+        private static readonly Color couleurSelection = Color.Pink;
+
+        //un membre affiché dans un des deux trombinoscopes
         private class MembreListe
         {
             public string Matricule;
             public string Nom;
             public bool EstChef;
-
-            public override string ToString()
-            {
-                return Nom + " (" + Matricule + ")" + (EstChef ? " - Chef" : "");
-            }
         }
 
         public FormModifierEquipage(int numero, string planete)
@@ -48,7 +51,6 @@ namespace Form_Sae24_Stargate
         private void ConstruireFenetre()
         {
             this.Text = "Modifier l'équipage";
-            this.ClientSize = new Size(760, 560);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -57,56 +59,78 @@ namespace Form_Sae24_Stargate
             this.ForeColor = Color.White;
             this.Font = new Font("Microsoft Sans Serif", 12F);
 
+            //grande fenêtre (3 cartes par ligne de chaque côté), sans dépasser de l'écran
+            Rectangle ecran = Screen.PrimaryScreen.WorkingArea;
+            int largeur = Math.Min(1640, ecran.Width - 40);
+            int hauteur = Math.Min(960, ecran.Height - 60);
+            this.ClientSize = new Size(largeur, hauteur);
+
+            int largeurMilieu = 160;
+            int largeurPanneau = (largeur - 40 - largeurMilieu) / 2;
+            int hauteurPanneau = hauteur - 105 - 70;
+            int xDroite = 20 + largeurPanneau + largeurMilieu;
+
             lblResume = new Label();
             lblResume.AutoSize = false;
-            lblResume.Location = new Point(20, 15);
-            lblResume.Size = new Size(720, 50);
+            lblResume.Location = new Point(20, 10);
+            lblResume.Size = new Size(largeur - 40, 55);
 
-            Label lblEquipage = new Label();
-            lblEquipage.Text = "Équipage actuel";
+            lblEquipage = new Label();
             lblEquipage.AutoSize = true;
             lblEquipage.Location = new Point(20, 75);
 
-            lstEquipage = new ListBox();
-            lstEquipage.Location = new Point(20, 105);
-            lstEquipage.Size = new Size(300, 380);
-            lstEquipage.SelectionMode = SelectionMode.MultiExtended;
-            lstEquipage.Sorted = true;
-            lstEquipage.DoubleClick += btnRetirer_Click;
+            flpEquipage = CreerTrombinoscope(new Point(20, 105), new Size(largeurPanneau, hauteurPanneau));
 
-            Label lblDisponibles = new Label();
-            lblDisponibles.Text = "Membres disponibles à ces dates";
+            lblDisponibles = new Label();
             lblDisponibles.AutoSize = true;
-            lblDisponibles.Location = new Point(440, 75);
+            lblDisponibles.Location = new Point(xDroite, 75);
 
-            lstDisponibles = new ListBox();
-            lstDisponibles.Location = new Point(440, 105);
-            lstDisponibles.Size = new Size(300, 380);
-            lstDisponibles.SelectionMode = SelectionMode.MultiExtended;
-            lstDisponibles.Sorted = true;
-            lstDisponibles.DoubleClick += btnAjouter_Click;
+            flpDisponibles = CreerTrombinoscope(new Point(xDroite, 105), new Size(largeurPanneau, hauteurPanneau));
 
-            Button btnAjouter = CreerBouton("← Ajouter", new Point(330, 220), Color.DarkViolet);
+            int xBoutons = 20 + largeurPanneau + (largeurMilieu - 130) / 2;
+            int yBoutons = 105 + hauteurPanneau / 2;
+
+            Button btnAjouter = CreerBouton("← Ajouter", new Point(xBoutons, yBoutons - 55), Color.DarkViolet);
+            btnAjouter.Size = new Size(130, 45);
             btnAjouter.Click += btnAjouter_Click;
 
-            Button btnRetirer = CreerBouton("Retirer →", new Point(330, 280), Color.MediumPurple);
+            Button btnRetirer = CreerBouton("Retirer →", new Point(xBoutons, yBoutons + 10), Color.MediumPurple);
+            btnRetirer.Size = new Size(130, 45);
             btnRetirer.Click += btnRetirer_Click;
 
-            Button btnAnnuler = CreerBouton("Annuler", new Point(512, 500), Color.MediumPurple);
+            Label lblAide = new Label();
+            lblAide.Text = "Cliquez sur les photos pour les sélectionner, puis sur Ajouter ou Retirer.";
+            lblAide.AutoSize = true;
+            lblAide.Location = new Point(20, hauteur - 50);
+
+            Button btnAnnuler = CreerBouton("Annuler", new Point(largeur - 260, hauteur - 60), Color.MediumPurple);
             btnAnnuler.Click += delegate { this.Close(); };
 
-            Button btnEnregistrer = CreerBouton("Enregistrer", new Point(632, 500), Color.DarkViolet);
+            Button btnEnregistrer = CreerBouton("Enregistrer", new Point(largeur - 140, hauteur - 60), Color.DarkViolet);
+            btnEnregistrer.Size = new Size(120, 41);
             btnEnregistrer.Click += btnEnregistrer_Click;
 
             this.Controls.Add(lblResume);
             this.Controls.Add(lblEquipage);
-            this.Controls.Add(lstEquipage);
+            this.Controls.Add(flpEquipage);
             this.Controls.Add(lblDisponibles);
-            this.Controls.Add(lstDisponibles);
+            this.Controls.Add(flpDisponibles);
             this.Controls.Add(btnAjouter);
             this.Controls.Add(btnRetirer);
+            this.Controls.Add(lblAide);
             this.Controls.Add(btnAnnuler);
             this.Controls.Add(btnEnregistrer);
+        }
+
+        private FlowLayoutPanel CreerTrombinoscope(Point position, Size taille)
+        {
+            FlowLayoutPanel panneau = new FlowLayoutPanel();
+            panneau.Location = position;
+            panneau.Size = taille;
+            panneau.AutoScroll = true;
+            panneau.BackColor = Color.MidnightBlue;
+            panneau.BorderStyle = BorderStyle.FixedSingle;
+            return panneau;
         }
 
         private Button CreerBouton(string texte, Point position, Color couleur)
@@ -162,7 +186,7 @@ namespace Form_Sae24_Stargate
                 SQLiteCommand cmdEquipage = new SQLiteCommand(reqEquipage, Connexion.Connec);
                 cmdEquipage.Parameters.AddWithValue("@planete", nomPlanete);
                 cmdEquipage.Parameters.AddWithValue("@numero", numeroMission);
-                RemplirListe(lstEquipage, cmdEquipage);
+                RemplirTrombinoscope(flpEquipage, cmdEquipage);
 
                 //membres libres pendant toute la durée de la mission
                 string reqDispo = @"SELECT Membre.matricule, Membre.nom, Membre.prenom
@@ -177,7 +201,9 @@ namespace Form_Sae24_Stargate
 
                 SQLiteCommand cmdDispo = new SQLiteCommand(reqDispo, Connexion.Connec);
                 AjouterParametresMission(cmdDispo);
-                RemplirListe(lstDisponibles, cmdDispo);
+                RemplirTrombinoscope(flpDisponibles, cmdDispo);
+
+                MettreAJourTitres();
             }
             catch (Exception ex)
             {
@@ -221,9 +247,10 @@ namespace Form_Sae24_Stargate
             commande.Parameters.AddWithValue("@dateRetour", dateRetour);
         }
 
-        private void RemplirListe(ListBox liste, SQLiteCommand commande)
+        private void RemplirTrombinoscope(FlowLayoutPanel panneau, SQLiteCommand commande)
         {
-            liste.Items.Clear();
+            panneau.Controls.Clear();
+            cartesSelectionnees.Clear();
 
             using (SQLiteDataReader lecteur = commande.ExecuteReader())
             {
@@ -233,72 +260,124 @@ namespace Form_Sae24_Stargate
                     membre.Matricule = lecteur["matricule"].ToString();
                     membre.Nom = lecteur["nom"].ToString() + " " + lecteur["prenom"].ToString();
                     membre.EstChef = membre.Matricule == matriculeChef;
-                    liste.Items.Add(membre);
+                    panneau.Controls.Add(CreerCarte(membre));
                 }
             }
         }
 
+        /// <summary>
+        /// Carte du trombinoscope (photo + nom) dans un cadre qui devient rose quand elle est sélectionnée.
+        /// Un double-clic sur la photo ouvre toujours la fiche du membre.
+        /// </summary>
+        private Panel CreerCarte(MembreListe membre)
+        {
+            UserControlCarteMembre carte = new UserControlCarteMembre();
+            carte.RemplirInfos(membre.Matricule, membre.EstChef ? membre.Nom + " (Chef)" : membre.Nom);
+            carte.Margin = new Padding(0);
+
+            //le cadre prend la taille de la carte, avec 5 pixels de bordure pour la couleur de sélection
+            Panel cadre = new Panel();
+            cadre.AutoSize = true;
+            cadre.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            cadre.Padding = new Padding(5);
+            cadre.BackColor = couleurCadre;
+            cadre.Margin = new Padding(3);
+            cadre.Tag = membre;
+            cadre.Controls.Add(carte);
+
+            carte.Location = new Point(5, 5);
+            carte.afficheur = delegate { ClicSurUneCarte(cadre); };
+
+            return cadre;
+        }
+
+        private void ClicSurUneCarte(Panel cadre)
+        {
+            if (cartesSelectionnees.Contains(cadre))
+            {
+                cartesSelectionnees.Remove(cadre);
+                cadre.BackColor = couleurCadre;
+            }
+            else
+            {
+                cartesSelectionnees.Add(cadre);
+                cadre.BackColor = couleurSelection;
+            }
+        }
+
+        private void MettreAJourTitres()
+        {
+            lblEquipage.Text = "Équipage actuel (" + flpEquipage.Controls.Count + ")";
+            lblDisponibles.Text = "Membres disponibles à ces dates (" + flpDisponibles.Controls.Count + ")";
+        }
+
         private void btnAjouter_Click(object sender, EventArgs e)
         {
-            List<MembreListe> choisis = lstDisponibles.SelectedItems.Cast<MembreListe>().ToList();
-
-            DeplacerMembres(choisis, lstDisponibles, lstEquipage);
+            DeplacerCartes(flpDisponibles, flpEquipage);
         }
 
         private void btnRetirer_Click(object sender, EventArgs e)
         {
-            List<MembreListe> choisis = lstEquipage.SelectedItems.Cast<MembreListe>().ToList();
-
             //le chef reste obligatoirement dans l'équipage
-            if (choisis.Any(m => m.EstChef))
+            Panel carteChef = cartesSelectionnees.FirstOrDefault(c => c.Parent == flpEquipage && ((MembreListe)c.Tag).EstChef);
+            if (carteChef != null)
             {
+                ClicSurUneCarte(carteChef);
                 FormSucces.Afficher("Le chef de mission ne peut pas être retiré de l'équipage.", true);
-                choisis = choisis.Where(m => !m.EstChef).ToList();
+
+                if (!cartesSelectionnees.Any(c => c.Parent == flpEquipage))
+                {
+                    return;
+                }
             }
 
-            DeplacerMembres(choisis, lstEquipage, lstDisponibles);
+            DeplacerCartes(flpEquipage, flpDisponibles);
         }
 
         /// <summary>
-        /// Passe des membres d'une liste à l'autre, puis les sélectionne et fait défiler
-        /// la liste d'arrivée jusqu'à eux pour qu'on les voie tout de suite
+        /// Passe les cartes sélectionnées d'un trombinoscope à l'autre, garde l'ordre alphabétique
+        /// et fait défiler jusqu'à la première carte déplacée pour qu'on la voie tout de suite
         /// </summary>
-        private void DeplacerMembres(List<MembreListe> membres, ListBox depart, ListBox arrivee)
+        private void DeplacerCartes(FlowLayoutPanel depart, FlowLayoutPanel arrivee)
         {
-            if (membres.Count == 0)
+            List<Panel> cartes = cartesSelectionnees.Where(c => c.Parent == depart).ToList();
+
+            if (cartes.Count == 0)
             {
+                FormSucces.Afficher("Cliquez d'abord sur une ou plusieurs photos.", true);
                 return;
             }
 
-            depart.BeginUpdate();
-            arrivee.BeginUpdate();
+            depart.SuspendLayout();
+            arrivee.SuspendLayout();
 
-            foreach (MembreListe membre in membres)
+            foreach (Panel cadre in cartes)
             {
-                depart.Items.Remove(membre);
-                arrivee.Items.Add(membre);
+                depart.Controls.Remove(cadre);
+                arrivee.Controls.Add(cadre);
+                cadre.BackColor = couleurCadre;
+                cartesSelectionnees.Remove(cadre);
             }
 
-            depart.ClearSelected();
-            arrivee.ClearSelected();
-
-            int premierIndex = arrivee.Items.Count;
-            foreach (MembreListe membre in membres)
+            //remet les cartes dans l'ordre des noms
+            List<Panel> triees = arrivee.Controls.Cast<Panel>().OrderBy(c => ((MembreListe)c.Tag).Nom).ToList();
+            for (int i = 0; i < triees.Count; i++)
             {
-                int index = arrivee.Items.IndexOf(membre);
-                arrivee.SetSelected(index, true);
-                premierIndex = Math.Min(premierIndex, index);
+                arrivee.Controls.SetChildIndex(triees[i], i);
             }
 
-            depart.EndUpdate();
-            arrivee.EndUpdate();
+            depart.ResumeLayout();
+            arrivee.ResumeLayout();
 
-            arrivee.TopIndex = premierIndex;
+            MettreAJourTitres();
+
+            Panel premiere = triees.First(c => cartes.Contains(c));
+            arrivee.ScrollControlIntoView(premiere);
         }
 
         private void btnEnregistrer_Click(object sender, EventArgs e)
         {
-            List<string> nouvelEquipage = lstEquipage.Items.Cast<MembreListe>().Select(m => m.Matricule).ToList();
+            List<string> nouvelEquipage = flpEquipage.Controls.Cast<Panel>().Select(c => ((MembreListe)c.Tag).Matricule).ToList();
 
             SQLiteTransaction maTransaction = null;
 
