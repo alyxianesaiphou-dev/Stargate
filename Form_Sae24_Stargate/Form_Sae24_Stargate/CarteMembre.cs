@@ -20,10 +20,10 @@ namespace Form_Sae24_Stargate
         //fond conseillé pour un trombinoscope de cartes
         public static readonly Color CouleurTrombinoscope = Color.FromArgb(28, 24, 70);
 
-        private static readonly Color couleurCarte = Color.FromArgb(48, 42, 110);
-        private static readonly Color couleurCarteSurvol = Color.FromArgb(72, 64, 150);
-        private static readonly Color couleurSelection = Color.HotPink;
-        private static readonly Color couleurFondSelection = Color.FromArgb(120, 40, 110);
+        internal static readonly Color couleurCarte = Color.FromArgb(48, 42, 110);
+        internal static readonly Color couleurCarteSurvol = Color.FromArgb(72, 64, 150);
+        internal static readonly Color couleurSelection = Color.HotPink;
+        internal static readonly Color couleurFondSelection = Color.FromArgb(120, 40, 110);
 
         //épaisseur du cadre rose de sélection
         private const int bordure = 5;
@@ -137,8 +137,13 @@ namespace Form_Sae24_Stargate
         /// </summary>
         public static void CentrerColonnes(FlowLayoutPanel panneau)
         {
+            CentrerColonnes(panneau, Largeur, Marge);
+        }
+
+        public static void CentrerColonnes(FlowLayoutPanel panneau, int largeurCarte, int margeCarte)
+        {
             int largeurUtile = panneau.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 4;
-            int largeurColonne = Largeur + 2 * Marge;
+            int largeurColonne = largeurCarte + 2 * margeCarte;
             int nbColonnes = Math.Max(1, largeurUtile / largeurColonne);
             int marge = Math.Max(0, (largeurUtile - nbColonnes * largeurColonne) / 2);
             panneau.Padding = new Padding(marge, 6, 0, 6);

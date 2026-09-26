@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using UserControlTrombinoPlanete;
 using System.Data.SQLite;
 
 namespace Form_Sae24_Stargate
@@ -16,7 +15,7 @@ namespace Form_Sae24_Stargate
     {
         private int nbMembre = 0;
         private CarteMembre chefSelectionne = null;
-        private UCTrombPlanete planeteSelectionnee = null;
+        private CartePlanete planeteSelectionnee = null;
         private List<CarteMembre> membresSelectionnes = new List<CarteMembre>();
         
         private Dictionary<UserControlExtraterrestres.UCTrombinoExtraterrestre, int> capturesSelectionnees = new Dictionary<UserControlExtraterrestres.UCTrombinoExtraterrestre, int>();
@@ -47,7 +46,7 @@ namespace Form_Sae24_Stargate
 
         }
     
-        private void passserEtape1a2(UCTrombPlanete planetChoisie)
+        private void passserEtape1a2(CartePlanete planetChoisie)
         {
             
             lblPlanete.Text = "Planète : " + planetChoisie.getNomPlanete();
@@ -256,6 +255,8 @@ namespace Form_Sae24_Stargate
         private void ChargerPlanetes()
         {
             flpChoixPlanete.Controls.Clear();
+            flpChoixPlanete.BackColor = CarteMembre.CouleurTrombinoscope;
+            CarteMembre.CentrerColonnes(flpChoixPlanete, CartePlanete.Largeur, CartePlanete.Marge);
 
             try
             {
@@ -299,21 +300,11 @@ namespace Form_Sae24_Stargate
                         dataBaz = "?";
                     }
 
-                    UCTrombPlanete planete = new UCTrombPlanete(nomPlanete, temperature, gravite, dataBaz);
+                    CartePlanete planete = new CartePlanete(nomPlanete, temperature, gravite, dataBaz);
 
-                    planete.afficheur = ClicSurUnePlanete;
+                    planete.Clic += ClicSurUnePlanete;
 
-                    //cadre autour de la planète : il devient rose quand elle est choisie
-                    Panel cadre = new Panel();
-                    cadre.AutoSize = true;
-                    cadre.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                    cadre.Padding = new Padding(6);
-                    cadre.Margin = new Padding(6);
-                    cadre.BackColor = Color.Transparent;
-                    planete.Location = new Point(6, 6);
-                    cadre.Controls.Add(planete);
-
-                    flpChoixPlanete.Controls.Add(cadre);
+                    flpChoixPlanete.Controls.Add(planete);
                 }
                 lecteur.Close();
             }
@@ -324,31 +315,25 @@ namespace Form_Sae24_Stargate
         }
         private void ClicSurUnePlanete(object sender, EventArgs e)
         {
+            CartePlanete planeteChoisie = (CartePlanete)sender;
 
-            Control btn = (Control)sender;
-
-            UCTrombPlanete planeteChoisie = btn as UCTrombPlanete;
-            if (planeteChoisie == null)
-            {
-                planeteChoisie = (UCTrombPlanete)btn.Parent;
-            }
-
-            //tous les cadres reviennent transparents, puis celui de la planète choisie passe en rose
-            foreach (Control cadre in flpChoixPlanete.Controls)
-            {
-                cadre.BackColor = Color.Transparent;
-            }
-
+            //un deuxième clic sur la planète choisie la désélectionne
             if (planeteSelectionnee == planeteChoisie)
             {
+                planeteChoisie.Selectionnee = false;
                 planeteSelectionnee = null;
                 lblPlanete.Text = "Planète : ";
                 MettreAJourBoutons();
                 return;
             }
 
-            planeteChoisie.Parent.BackColor = Color.HotPink;
+            //une seule planète : on désélectionne l'ancienne
+            if (planeteSelectionnee != null)
+            {
+                planeteSelectionnee.Selectionnee = false;
+            }
 
+            planeteChoisie.Selectionnee = true;
             planeteSelectionnee = planeteChoisie;
 
             lblPlanete.Text = "Planète : " + planeteChoisie.getNomPlanete();
