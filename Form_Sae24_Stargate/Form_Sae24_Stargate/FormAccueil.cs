@@ -363,7 +363,10 @@ namespace Form_Sae24_Stargate
             FormAuthentification frmLogin = new FormAuthentification();
             if (frmLogin.ShowDialog() == DialogResult.OK)
             {
-                //Si authentification ok, ouverture nouvelle mission
+                //Si authentification ok, barre de chargement puis ouverture nouvelle mission
+                FormEcranChargement ecranChargement = new FormEcranChargement();
+                ecranChargement.ShowDialog(this);
+
                 FormSaisieNouvelleMission frmSaisieMission = new FormSaisieNouvelleMission();
                 frmSaisieMission.ShowDialog();
 

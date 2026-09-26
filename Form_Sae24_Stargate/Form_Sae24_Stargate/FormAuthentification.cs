@@ -60,7 +60,7 @@ namespace Form_Sae24_Stargate
 
                     if (valide)
                     {
-                        MessageBox.Show("Authentification réussie", "Accès autorisé");
+                        //plus de popup : FormAccueil affiche la barre de chargement puis l'ajout de mission
                         DialogResult = DialogResult.OK;
                     }
                     else
