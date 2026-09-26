@@ -71,6 +71,7 @@ namespace Form_Sae24_Stargate
             lstEquipage.Location = new Point(20, 105);
             lstEquipage.Size = new Size(300, 380);
             lstEquipage.SelectionMode = SelectionMode.MultiExtended;
+            lstEquipage.Sorted = true;
             lstEquipage.DoubleClick += btnRetirer_Click;
 
             Label lblDisponibles = new Label();
@@ -82,6 +83,7 @@ namespace Form_Sae24_Stargate
             lstDisponibles.Location = new Point(440, 105);
             lstDisponibles.Size = new Size(300, 380);
             lstDisponibles.SelectionMode = SelectionMode.MultiExtended;
+            lstDisponibles.Sorted = true;
             lstDisponibles.DoubleClick += btnAjouter_Click;
 
             Button btnAjouter = CreerBouton("← Ajouter", new Point(330, 220), Color.DarkViolet);
@@ -240,29 +242,58 @@ namespace Form_Sae24_Stargate
         {
             List<MembreListe> choisis = lstDisponibles.SelectedItems.Cast<MembreListe>().ToList();
 
-            foreach (MembreListe membre in choisis)
-            {
-                lstDisponibles.Items.Remove(membre);
-                lstEquipage.Items.Add(membre);
-            }
+            DeplacerMembres(choisis, lstDisponibles, lstEquipage);
         }
 
         private void btnRetirer_Click(object sender, EventArgs e)
         {
             List<MembreListe> choisis = lstEquipage.SelectedItems.Cast<MembreListe>().ToList();
 
-            foreach (MembreListe membre in choisis)
+            //le chef reste obligatoirement dans l'équipage
+            if (choisis.Any(m => m.EstChef))
             {
-                //le chef reste obligatoirement dans l'équipage
-                if (membre.EstChef)
-                {
-                    FormSucces.Afficher("Le chef de mission ne peut pas être retiré de l'équipage.", true);
-                    continue;
-                }
-
-                lstEquipage.Items.Remove(membre);
-                lstDisponibles.Items.Add(membre);
+                FormSucces.Afficher("Le chef de mission ne peut pas être retiré de l'équipage.", true);
+                choisis = choisis.Where(m => !m.EstChef).ToList();
             }
+
+            DeplacerMembres(choisis, lstEquipage, lstDisponibles);
+        }
+
+        /// <summary>
+        /// Passe des membres d'une liste à l'autre, puis les sélectionne et fait défiler
+        /// la liste d'arrivée jusqu'à eux pour qu'on les voie tout de suite
+        /// </summary>
+        private void DeplacerMembres(List<MembreListe> membres, ListBox depart, ListBox arrivee)
+        {
+            if (membres.Count == 0)
+            {
+                return;
+            }
+
+            depart.BeginUpdate();
+            arrivee.BeginUpdate();
+
+            foreach (MembreListe membre in membres)
+            {
+                depart.Items.Remove(membre);
+                arrivee.Items.Add(membre);
+            }
+
+            depart.ClearSelected();
+            arrivee.ClearSelected();
+
+            int premierIndex = arrivee.Items.Count;
+            foreach (MembreListe membre in membres)
+            {
+                int index = arrivee.Items.IndexOf(membre);
+                arrivee.SetSelected(index, true);
+                premierIndex = Math.Min(premierIndex, index);
+            }
+
+            depart.EndUpdate();
+            arrivee.EndUpdate();
+
+            arrivee.TopIndex = premierIndex;
         }
 
         private void btnEnregistrer_Click(object sender, EventArgs e)
