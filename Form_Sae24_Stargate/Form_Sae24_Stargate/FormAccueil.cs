@@ -501,6 +501,10 @@ namespace Form_Sae24_Stargate
                 }
             }
 
+            //Choix vide en tête des listes pour ne rien filtrer
+            ComboVide.AjouterChoixVide(cboFiltreCouleur);
+            ComboVide.AjouterChoixVide(cboFiltrePlanete);
+
             //Paramètres du flpAffichage comprenant les usercontrol
             this.grpFiltre.Location = new System.Drawing.Point(360, 29);
             flpAffichage.Visible = true;
@@ -547,6 +551,8 @@ namespace Form_Sae24_Stargate
                         cboDegBien.Sorted = true;
                     }
                 }
+                ComboVide.AjouterChoixVide(cboFiltreInstrument);
+                ComboVide.AjouterChoixVide(cboDegBien);
             }
             if (!ckbFiltreAllie.Checked)
             {
@@ -584,6 +590,8 @@ namespace Form_Sae24_Stargate
                         cboFiltreArme.Sorted = true;
                     }
                 }
+                ComboVide.AjouterChoixVide(cboDegMal);
+                ComboVide.AjouterChoixVide(cboFiltreArme);
             }
             if (!ckbFiltreEnnemi.Checked)
             {
@@ -769,15 +777,15 @@ namespace Form_Sae24_Stargate
         private void btnSupprimerFiltre_Click(object sender, EventArgs e)
         {
             txtFiltreNom.Clear();
-            cboFiltreCouleur.SelectedItem = null;
+            ComboVide.Vider(cboFiltreCouleur);
             ckbFiltreAllie.Checked = false;
             ckbFiltreEnnemi.Checked = false;
             ckbFiltreNeutre.Checked = false;
-            cboDegBien.SelectedItem = null;
-            cboFiltrePlanete.SelectedItem = null;
-            cboFiltreInstrument.SelectedItem = null;
-            cboDegMal.SelectedItem = null;
-            cboFiltreArme.SelectedItem = null;
+            ComboVide.Vider(cboDegBien);
+            ComboVide.Vider(cboFiltrePlanete);
+            ComboVide.Vider(cboFiltreInstrument);
+            ComboVide.Vider(cboDegMal);
+            ComboVide.Vider(cboFiltreArme);
 
             //Réafficher la totalité des aliens
             flpAffichageTrombinoAlien(MesDatas.DsGlobal.Tables["dtAlien"], flpAffichage);
@@ -1421,9 +1429,7 @@ namespace Form_Sae24_Stargate
 
             //Tab1 : Liste de toutes les personnes (nom, prénom, type (militaire ou civil)) avec laquelle un membre est déjà parti en mission.
 
-            cboTab1MembreMission.DataSource = Statistiques.ObtenirMembreNomPrenom();
-            cboTab1MembreMission.DisplayMember = "NomPrenom";
-            cboTab1MembreMission.ValueMember = "matricule";
+            ComboVide.Remplir(cboTab1MembreMission, Statistiques.ObtenirMembreNomPrenom(), "NomPrenom", "matricule");
 
             //Tab 2 : Pour les missions comportant un équipage de plus de 10 personnes, indiquer la liste des dépenses effectuées, ainsi que les budgets initiaux et actuels.
             dgvTab2.DataSource = Statistiques.MissionPlusDixMembre();
@@ -1481,11 +1487,7 @@ namespace Form_Sae24_Stargate
 
             //Remplissage de la comboBox avec les noms des missions
             
-            cboTab5Missions.DataSource = Statistiques.ObtenirNomMission();
-            
-            cboTab5Missions.DisplayMember = "mission";
-            
-            cboTab5Missions.ValueMember = "mission";
+            ComboVide.Remplir(cboTab5Missions, Statistiques.ObtenirNomMission(), "mission", "mission");
 
 
         }
@@ -1498,7 +1500,13 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void cboTab1MembreMission_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cboTab1MembreMission.SelectedValue is DataRowView) { return; }
+            //Choix vide : on n'affiche rien
+            if (ComboVide.EstVide(cboTab1MembreMission))
+            {
+                dgvTab1CopainMission.DataSource = null;
+                lblAucunResultat.Visible = false;
+                return;
+            }
             
                 //récupération du matricule du membre sélectionné
                 string matricule = cboTab1MembreMission.SelectedValue.ToString();
@@ -1530,7 +1538,12 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void cboTab5Missions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cboTab5Missions.SelectedValue is DataRowView) {  return; }
+            //Choix vide : on n'affiche rien
+            if (ComboVide.EstVide(cboTab5Missions))
+            {
+                dgvTab5Informateur.DataSource = null;
+                return;
+            }
             string nomMission = cboTab5Missions.SelectedValue.ToString();
 
                 string nomPlanete = "";
