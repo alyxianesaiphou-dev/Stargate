@@ -38,10 +38,7 @@ namespace Form_Sae24_Stargate
                 DataTable dtInf = new DataTable();
                 dtInf.Load(readerInf);
 
-                cmbInformateur.DataSource = dtInf;
-                cmbInformateur.DisplayMember = "nom";
-                cmbInformateur.ValueMember = "nomCode";
-                cmbInformateur.SelectedIndex = -1;
+                ComboVide.Remplir(cmbInformateur, dtInf, "nom", "nomCode");
 
                 readerInf.Close();
 
@@ -52,10 +49,7 @@ namespace Form_Sae24_Stargate
                 DataTable dtType = new DataTable();
                 dtType.Load(readerType);
 
-                cmbTypeDepense.DataSource = dtType;
-                cmbTypeDepense.DisplayMember = "libelle";
-                cmbTypeDepense.ValueMember = "id";
-                cmbTypeDepense.SelectedIndex = -1;
+                ComboVide.Remplir(cmbTypeDepense, dtType, "libelle", "id");
 
                 readerType.Close();
 
@@ -67,10 +61,7 @@ namespace Form_Sae24_Stargate
                 DataTable dtEsp = new DataTable();
                 dtEsp.Load(readerEsp);
 
-                cmbEspece.DataSource = dtEsp;
-                cmbEspece.DisplayMember = "nom";
-                cmbEspece.ValueMember = "idEspece";
-                cmbEspece.SelectedIndex = -1;
+                ComboVide.Remplir(cmbEspece, dtEsp, "nom", "idEspece");
 
                 readerEsp.Close();
 
@@ -84,10 +75,7 @@ namespace Form_Sae24_Stargate
                 DataTable dtAllie = new DataTable();
                 dtAllie.Load(readerAllie);
 
-                cmbEspeceAlliee.DataSource = dtAllie;
-                cmbEspeceAlliee.DisplayMember = "nom";
-                cmbEspeceAlliee.ValueMember = "idEspece";
-                cmbEspeceAlliee.SelectedIndex = -1;
+                ComboVide.Remplir(cmbEspeceAlliee, dtAllie, "nom", "idEspece");
 
                 readerAllie.Close();
             }
@@ -104,7 +92,7 @@ namespace Form_Sae24_Stargate
             {
                 SQLiteConnection maConnexion = Connexion.Connec;
 
-                if (cmbInformateur.SelectedValue == null)
+                if (ComboVide.EstVide(cmbInformateur))
                 {
                     FormSucces.Afficher("Veuillez sélectionner un informateur.", true);
                     return;
@@ -295,7 +283,7 @@ namespace Form_Sae24_Stargate
 
         private void ViderChampsContact()
         {
-            cmbInformateur.SelectedIndex = -1;
+            ComboVide.Vider(cmbInformateur);
             dtpDateContact.Value = DateTime.Now;
             txtSomme.Clear();
             rtxtAppreciation.Clear();
@@ -316,7 +304,7 @@ namespace Form_Sae24_Stargate
             {
                 SQLiteConnection maConnexion = Connexion.Connec;
 
-                if (cmbTypeDepense.SelectedValue == null)
+                if (ComboVide.EstVide(cmbTypeDepense))
                 {
                     FormSucces.Afficher("Veuillez sélectionner un type.", true);
                     return;
@@ -340,7 +328,7 @@ namespace Form_Sae24_Stargate
 
                 if (achatDataBaz)
                 {
-                    if (cmbEspeceAlliee.SelectedValue == null)
+                    if (ComboVide.EstVide(cmbEspeceAlliee))
                     {
                         FormSucces.Afficher("Veuillez sélectionner l'espèce alliée.", true);
                         return;
@@ -431,12 +419,12 @@ namespace Form_Sae24_Stargate
 
         private void ViderChampsDepense()
         {
-            cmbTypeDepense.SelectedIndex = -1;
+            ComboVide.Vider(cmbTypeDepense);
             dtpDateDepense.Value = DateTime.Now;
             txtMontantDepense.Clear();
             rtxtMotifDepense.Clear();
             txtQuantite.Clear();
-            cmbEspeceAlliee.SelectedIndex = -1;
+            ComboVide.Vider(cmbEspeceAlliee);
         }
 
         private void btnNvEvenement_Click(object sender, EventArgs e)
@@ -503,8 +491,9 @@ namespace Form_Sae24_Stargate
 
         private void cmbTypeDepense_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int idSelectionne;
-            if (cmbTypeDepense.SelectedValue != null && int.TryParse(cmbTypeDepense.SelectedValue.ToString(), out idSelectionne))
+            //Choix vide : on cache les champs DataBaz (idSelectionne reste à 0)
+            int idSelectionne = 0;
+            if (ComboVide.EstVide(cmbTypeDepense) || int.TryParse(cmbTypeDepense.SelectedValue.ToString(), out idSelectionne))
             {
                 // afficher le dataBaz
                 if (idSelectionne == 1)
@@ -521,7 +510,7 @@ namespace Form_Sae24_Stargate
                     lblEspece.Visible = false;
                     cmbEspeceAlliee.Visible = false;
                     txtQuantite.Clear();
-                    cmbEspeceAlliee.SelectedIndex = -1;
+                    ComboVide.Vider(cmbEspeceAlliee);
 
                 }
             }
@@ -561,7 +550,7 @@ namespace Form_Sae24_Stargate
             try
             {
                 //vérifie que l'utilisateur a mis plus que 0
-                if (cmbEspece.SelectedValue == null || nudNombreCapture.Value <= 0)
+                if (ComboVide.EstVide(cmbEspece) || nudNombreCapture.Value <= 0)
                 {
                     FormSucces.Afficher("Veuillez sélectionner une espèce et un nombre supérieur à 0.", true);
                     return; 
@@ -607,7 +596,7 @@ namespace Form_Sae24_Stargate
 
         private void ViderChampsCapture()
         {
-            cmbEspece.SelectedIndex = -1;
+            ComboVide.Vider(cmbEspece);
             nudNombreCapture.Value = 0;
         }
 

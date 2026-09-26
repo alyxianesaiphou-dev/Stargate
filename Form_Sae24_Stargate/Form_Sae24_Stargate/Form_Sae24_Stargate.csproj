@@ -88,6 +88,7 @@
     <Compile Include="CarteMembre.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ComboVide.cs" />
     <Compile Include="Connexion.cs" />
     <Compile Include="FormDetailsMembre.cs">
       <SubType>Form</SubType>
