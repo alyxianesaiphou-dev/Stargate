@@ -18,15 +18,15 @@ namespace Form_Sae24_Stargate
         private CartePlanete planeteSelectionnee = null;
         private List<CarteMembre> membresSelectionnes = new List<CarteMembre>();
         
-        private Dictionary<UserControlExtraterrestres.UCTrombinoExtraterrestre, int> capturesSelectionnees = new Dictionary<UserControlExtraterrestres.UCTrombinoExtraterrestre, int>();
+        private Dictionary<CarteAlien, int> capturesSelectionnees = new Dictionary<CarteAlien, int>();
 
         
-        private UserControlExtraterrestres.UCTrombinoExtraterrestre alienEnCoursDeSaisie = null;
+        private CarteAlien alienEnCoursDeSaisie = null;
 
         
         private Panel pnlSaisieQuantite;
         private Label lblSaisieQuantite;
-        private TextBox txtSaisieQuantite; private UserControlExtraterrestres.UCTrombinoExtraterrestre alienSelectionne = null;
+        private TextBox txtSaisieQuantite; private CarteAlien alienSelectionne = null;
         public FormSaisieNouvelleMission()
         {
             InitializeComponent();
@@ -612,14 +612,21 @@ namespace Form_Sae24_Stargate
         private void ChargerAliensPlanete(string nomPlaneteChoisie)
         {
             flpCaptures.Controls.Clear();
+            flpCaptures.BackColor = CarteMembre.CouleurTrombinoscope;
+            CarteMembre.CentrerColonnes(flpCaptures, CarteAlien.Largeur, CarteAlien.Marge);
 
             try
             {
-                string requeteSQL = @" SELECT Espece.nom, Espece.couleur
+                string requeteSQL = @" SELECT Espece.nom, Espece.couleur, Habiter.pourcentage,
+                                        Allie.idEspece AS idAllie, Allie.degreBienveillance,
+                                        Ennemi.idEspece AS idEnnemi, Ennemi.degreAgressivite
                                     FROM Espece
                                     INNER JOIN Habiter
                                         ON Espece.id = Habiter.idEspece
-                                    WHERE Habiter.nomPlanete = @planete";
+                                    LEFT JOIN Allie ON Allie.idEspece = Espece.id
+                                    LEFT JOIN Ennemi ON Ennemi.idEspece = Espece.id
+                                    WHERE Habiter.nomPlanete = @planete
+                                    ORDER BY Espece.nom";
 
                 SQLiteCommand commande = new SQLiteCommand(requeteSQL, Connexion.Connec);
 
@@ -632,9 +639,23 @@ namespace Form_Sae24_Stargate
                     string nomAlien = lecteur["nom"].ToString();
                     string couleur = lecteur["couleur"].ToString();
 
-                    UserControlExtraterrestres.UCTrombinoExtraterrestre carteAlien = new UserControlExtraterrestres.UCTrombinoExtraterrestre(nomAlien,couleur, "Cible",nomPlaneteChoisie);
+                    //même règle que l'accueil : ennemi prioritaire sur allié, sinon neutre
+                    string statut = "Neutre";
+                    string degre = "";
+                    if (lecteur["idAllie"] != DBNull.Value)
+                    {
+                        statut = "Allié";
+                        degre = lecteur["degreBienveillance"].ToString();
+                    }
+                    if (lecteur["idEnnemi"] != DBNull.Value)
+                    {
+                        statut = "Ennemi";
+                        degre = lecteur["degreAgressivite"].ToString();
+                    }
 
-                    carteAlien.afficheur = ClicSurUnAlien;
+                    CarteAlien carteAlien = new CarteAlien(nomAlien, couleur, statut, degre, "Présence : " + lecteur["pourcentage"].ToString() + "%");
+
+                    carteAlien.Clic += ClicSurUnAlien;
 
                     flpCaptures.Controls.Add(carteAlien);
                 }
@@ -686,13 +707,7 @@ namespace Form_Sae24_Stargate
 
         private void ClicSurUnAlien(object sender, EventArgs e)
         {
-            Control declencheur = (Control)sender;
-            UserControlExtraterrestres.UCTrombinoExtraterrestre alienChoisi = declencheur as UserControlExtraterrestres.UCTrombinoExtraterrestre;
-            if (alienChoisi == null)
-            {
-                alienChoisi = (UserControlExtraterrestres.UCTrombinoExtraterrestre)declencheur.Parent;
-            }
-            alienEnCoursDeSaisie = alienChoisi;
+            alienEnCoursDeSaisie = (CarteAlien)sender;
 
             pnlSaisieQuantite.Location = new Point((this.Width - pnlSaisieQuantite.Width) / 2,(this.Height - pnlSaisieQuantite.Height) / 2);
 
@@ -715,12 +730,13 @@ namespace Form_Sae24_Stargate
                 {
                     capturesSelectionnees[alienEnCoursDeSaisie] = quantite;
 
-                    alienEnCoursDeSaisie.BackColor = Color.LightCoral;
+                    alienEnCoursDeSaisie.Selectionnee = true;
+                    alienEnCoursDeSaisie.Info = "À capturer : " + quantite;
 
                     pnlSaisieQuantite.Visible = false;
 
                     listViewCapture.Items.Clear();
-                    foreach (KeyValuePair<UserControlExtraterrestres.UCTrombinoExtraterrestre, int> capture in capturesSelectionnees)
+                    foreach (KeyValuePair<CarteAlien, int> capture in capturesSelectionnees)
                     {
                         listViewCapture.Items.Add(capture.Value.ToString() + " - " + capture.Key.getNomAlien());
                     }
@@ -836,7 +852,7 @@ namespace Form_Sae24_Stargate
                         cmdCapture.Parameters.AddWithValue("@nomAlien", "");
                         cmdCapture.Parameters.AddWithValue("@objectif", 0);
 
-                        foreach (KeyValuePair<UserControlExtraterrestres.UCTrombinoExtraterrestre, int> capture
+                        foreach (KeyValuePair<CarteAlien, int> capture
                             in capturesSelectionnees)
                         {
                             cmdCapture.Parameters["@nomAlien"].Value = capture.Key.getNomAlien();

@@ -89,6 +89,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ComboVide.cs" />
+    <Compile Include="CarteAlien.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CartePlanete.cs">
       <SubType>Component</SubType>
     </Compile>
