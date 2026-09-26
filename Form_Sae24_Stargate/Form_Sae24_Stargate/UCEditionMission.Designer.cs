@@ -228,6 +228,11 @@ namespace Form_Sae24_Stargate
             // nudNombreCapture
             // 
             this.nudNombreCapture.Location = new System.Drawing.Point(169, 112);
+            this.nudNombreCapture.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
             this.nudNombreCapture.Name = "nudNombreCapture";
             this.nudNombreCapture.Size = new System.Drawing.Size(120, 26);
             this.nudNombreCapture.TabIndex = 8;
