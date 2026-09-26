@@ -618,8 +618,7 @@ namespace Form_Sae24_Stargate
             try
             {
                 string requeteSQL = @" SELECT Espece.nom, Espece.couleur, Habiter.pourcentage,
-                                        Allie.idEspece AS idAllie, Allie.degreBienveillance,
-                                        Ennemi.idEspece AS idEnnemi, Ennemi.degreAgressivite
+                                        Allie.idEspece AS idAllie, Ennemi.idEspece AS idEnnemi
                                     FROM Espece
                                     INNER JOIN Habiter
                                         ON Espece.id = Habiter.idEspece
@@ -641,19 +640,16 @@ namespace Form_Sae24_Stargate
 
                     //même règle que l'accueil : ennemi prioritaire sur allié, sinon neutre
                     string statut = "Neutre";
-                    string degre = "";
                     if (lecteur["idAllie"] != DBNull.Value)
                     {
                         statut = "Allié";
-                        degre = lecteur["degreBienveillance"].ToString();
                     }
                     if (lecteur["idEnnemi"] != DBNull.Value)
                     {
                         statut = "Ennemi";
-                        degre = lecteur["degreAgressivite"].ToString();
                     }
 
-                    CarteAlien carteAlien = new CarteAlien(nomAlien, couleur, statut, degre, "Présence : " + lecteur["pourcentage"].ToString() + "%");
+                    CarteAlien carteAlien = new CarteAlien(nomAlien, couleur, statut, "Présence : " + lecteur["pourcentage"].ToString() + "%");
 
                     carteAlien.Clic += ClicSurUnAlien;
 
