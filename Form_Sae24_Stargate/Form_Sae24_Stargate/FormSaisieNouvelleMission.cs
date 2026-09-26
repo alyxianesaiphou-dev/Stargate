@@ -263,7 +263,17 @@ namespace Form_Sae24_Stargate
 
                     planete.afficheur = ClicSurUnePlanete;
 
-                    flpChoixPlanete.Controls.Add(planete);
+                    //cadre autour de la planète : il devient rose quand elle est choisie
+                    Panel cadre = new Panel();
+                    cadre.AutoSize = true;
+                    cadre.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                    cadre.Padding = new Padding(6);
+                    cadre.Margin = new Padding(6);
+                    cadre.BackColor = Color.Transparent;
+                    planete.Location = new Point(6, 6);
+                    cadre.Controls.Add(planete);
+
+                    flpChoixPlanete.Controls.Add(cadre);
                 }
                 lecteur.Close();
             }
@@ -283,23 +293,25 @@ namespace Form_Sae24_Stargate
                 planeteChoisie = (UCTrombPlanete)btn.Parent;
             }
 
+            //tous les cadres reviennent transparents, puis celui de la planète choisie passe en rose
+            foreach (Control cadre in flpChoixPlanete.Controls)
+            {
+                cadre.BackColor = Color.Transparent;
+            }
+
             if (planeteSelectionnee == planeteChoisie)
             {
-                planeteChoisie.BackColor = Color.Transparent;
                 planeteSelectionnee = null;
+                lblPlanete.Text = "Planète : ";
                 return;
             }
 
-            foreach (Control ctrl in flpChoixPlanete.Controls)
-            {
-                if (ctrl is UCTrombPlanete)
-                {
-                    ctrl.BackColor = SystemColors.Control;
-                }
-            }
-            planeteChoisie.BackColor = Color.Pink;
+            planeteChoisie.Parent.BackColor = Color.HotPink;
 
             planeteSelectionnee = planeteChoisie;
+
+            lblPlanete.Text = "Planète : " + planeteChoisie.getNomPlanete();
+            lblPlanete.Visible = true;
         }
 
         private void ChargerMilitairesDisponibles(DateTime dateDebut, DateTime dateFin)
