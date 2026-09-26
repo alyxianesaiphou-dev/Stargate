@@ -37,11 +37,20 @@ namespace Form_Sae24_Stargate
             try
             {
 
-                string sql = $"select mdp from Admin where login = '{txtLogin.Text}'";
+                //login passé en paramètre pour empêcher l'injection SQL
+                string sql = "select mdp from Admin where login = @login";
                 SQLiteCommand cmd = new SQLiteCommand(sql, Connexion.Connec);
+                cmd.Parameters.AddWithValue("@login", txtLogin.Text);
                 object resultat = cmd.ExecuteScalar();
 
-                if (resultat != DBNull.Value && resultat != null)
+                if (resultat == DBNull.Value || resultat == null)
+                {
+                    //login inconnu : même message que pour un mauvais mot de passe
+                    MessageBox.Show("Échec de l'authentification", "Accès refusé");
+                    txtMdp.Clear();
+                    txtLogin.Focus();
+                }
+                else
                 {
                     string mdpStocke = resultat.ToString();
                     bool valide = BCrypt.Net.BCrypt.Verify(txtMdp.Text, mdpStocke);

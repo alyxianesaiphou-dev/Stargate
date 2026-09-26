@@ -135,6 +135,14 @@ namespace Form_Sae24_Stargate
             UCBoutonImage btnImage = (UCBoutonImage)btn.Parent;
             selectionnerBouton(btnImage);
 
+            AfficherTableauDeBord();
+        }
+
+        /// <summary>
+        /// Remplit le tableau de bord avec les missions du DataSet (en cours, à venir, terminées)
+        /// </summary>
+        private void AfficherTableauDeBord()
+        {
             //Gestion affichage
             tabAffichage.Visible = false;
             tabControlMission.Visible = true;
@@ -289,12 +297,14 @@ namespace Form_Sae24_Stargate
 
                 //Mettre une fonction pour recharger le data set et la table
                 ActualiserMissionsDansDataSet();
+
+                //Si le tableau de bord est affiché, il montre tout de suite la nouvelle mission
+                if (tabControlMission.Visible)
+                {
+                    AfficherTableauDeBord();
+                }
             }
-            else
-            {
-                //Authentification non ok, échec
-                MessageBox.Show("Échec de l'authentification");
-            }
+            //Sinon l'utilisateur a cliqué sur Annuler : les échecs sont déjà signalés par FormAuthentification
         }
 
         /// <summary>
