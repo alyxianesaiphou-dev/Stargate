@@ -42,6 +42,9 @@ namespace Form_Sae24_Stargate
             ChargerPlanetes();
             InitialiserPopupCapture();
 
+            //Visible ne vaut true qu'une fois la fenêtre affichée : on grise les boutons à ce moment-là
+            this.Shown += delegate { MettreAJourBoutons(); };
+
         }
     
         private void passserEtape1a2(UCTrombPlanete planetChoisie)
@@ -156,6 +159,43 @@ namespace Form_Sae24_Stargate
             {
                 lblNbMembreRestant.Text = "Équipage complet (" + nbPlacesDispo + " membres + le chef). Cliquez sur Étape suivante.";
             }
+
+            MettreAJourBoutons();
+        }
+
+        /// <summary>
+        /// Grise les boutons qu'on ne peut pas utiliser à l'étape en cours :
+        /// - Étape précédente : grisé à la première étape (choix de la planète)
+        /// - Étape suivante : grisé tant que l'étape n'est pas remplie, et à la dernière étape (captures)
+        /// - Valider la mission : actif seulement à la dernière étape, quand tout est rempli
+        /// </summary>
+        private void MettreAJourBoutons()
+        {
+            bool planeteChoisie = planeteSelectionnee != null;
+            bool chefChoisi = chefSelectionne != null;
+            bool equipageComplet = membresSelectionnes.Count == Math.Max(0, nbMembre - 1);
+
+            btnPrecedent.Enabled = !gpbChoixPlanete.Visible;
+
+            if (gpbChoixPlanete.Visible)
+            {
+                btnSuivant.Enabled = planeteChoisie;
+            }
+            else if (gpbChoixChef.Visible)
+            {
+                btnSuivant.Enabled = chefChoisi;
+            }
+            else if (gpbChoixMembreMission.Visible)
+            {
+                btnSuivant.Enabled = equipageComplet;
+            }
+            else
+            {
+                //paramètres : toujours valides ; captures : dernière étape, plus rien après
+                btnSuivant.Enabled = gpbChoixParametresMission.Visible;
+            }
+
+            btnValiderMission.Enabled = grbChoixCaptures.Visible && planeteChoisie && chefChoisi && equipageComplet;
         }
 
         private void passserEtape4a3(object sender, EventArgs e)
@@ -303,6 +343,7 @@ namespace Form_Sae24_Stargate
             {
                 planeteSelectionnee = null;
                 lblPlanete.Text = "Planète : ";
+                MettreAJourBoutons();
                 return;
             }
 
@@ -312,12 +353,14 @@ namespace Form_Sae24_Stargate
 
             lblPlanete.Text = "Planète : " + planeteChoisie.getNomPlanete();
             lblPlanete.Visible = true;
+            MettreAJourBoutons();
         }
 
         private void ChargerMilitairesDisponibles(DateTime dateDebut, DateTime dateFin)
         {
             flpChef.Controls.Clear();
             chefSelectionne = null;
+            MettreAJourBoutons();
             CarteMembre.CentrerColonnes(flpChef);
 
             try
@@ -395,6 +438,7 @@ namespace Form_Sae24_Stargate
                 membreChoisi.Selectionnee = false;
                 chefSelectionne = null;
                 lblChoixChef.Text = "Choisissez un chef de mission en cliquant sur sa photo :";
+                MettreAJourBoutons();
                 return;
             }
 
@@ -408,6 +452,7 @@ namespace Form_Sae24_Stargate
 
             chefSelectionne = membreChoisi;
             lblChoixChef.Text = "Chef choisi : " + membreChoisi.Nom + " (cliquez sur une autre photo pour changer)";
+            MettreAJourBoutons();
         }
 
         private void ChargerCivilsDisponibles(DateTime dateDebut, DateTime dateFin)
@@ -505,9 +550,11 @@ namespace Form_Sae24_Stargate
                 }
                 else
                 {
-                    FormSucces.Afficher("Veuillez sélectionner exactement " + nbPlacesDispo + " civils avant de continuer.", true);
+                    FormSucces.Afficher("Veuillez sélectionner exactement " + nbPlacesDispo + " membres avant de continuer.", true);
                 }
             }
+
+            MettreAJourBoutons();
         }
 
         private void btnPrecedent_Click(object sender, EventArgs e)
@@ -529,6 +576,8 @@ namespace Form_Sae24_Stargate
             {
                 passserEtape5a4(sender, e);
             }
+
+            MettreAJourBoutons();
         }
 
         private void dtpDates_ValueChanged(object sender, EventArgs e)
