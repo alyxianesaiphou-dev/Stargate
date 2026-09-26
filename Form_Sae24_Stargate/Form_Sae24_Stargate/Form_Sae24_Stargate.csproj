@@ -62,9 +62,6 @@
     <Reference Include="UCTrombinoPlanete">
       <HintPath>..\..\UCTrombinoPlanete\UCTrombinoPlanete\bin\Debug\UCTrombinoPlanete.dll</HintPath>
     </Reference>
-    <Reference Include="UCSuper">
-      <HintPath>..\..\..\UCSuper\UCSuper\bin\Debug\UCSuper.dll</HintPath>
-    </Reference>
     <Reference Include="UserControlBoutonAvecImage">
       <HintPath>..\..\UserControlBoutonAvecImage\UserControlBoutonAvecImage\bin\Debug\UserControlBoutonAvecImage.dll</HintPath>
     </Reference>
