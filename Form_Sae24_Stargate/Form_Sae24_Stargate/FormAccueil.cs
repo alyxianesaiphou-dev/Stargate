@@ -764,7 +764,7 @@ namespace Form_Sae24_Stargate
         /****************************************************************************************************************************************************************************/
         /// <summary>
         /// Les filtres s'appliquent tout seuls dès qu'on tape ou coche quelque chose
-        /// (le bouton Appliquer marche toujours). Les listes des filtres ne se tapent plus à la main :
+        /// (le bouton Appliquer marche toujours). On ne peut pas taper de texte dans les listes des filtres :
         /// on choisit forcément une valeur qui existe.
         /// </summary>
         private void BrancherFiltresAutomatiques()
@@ -772,7 +772,8 @@ namespace Form_Sae24_Stargate
             System.Windows.Forms.ComboBox[] listesAliens = { cboFiltreCouleur, cboFiltrePlanete, cboDegBien, cboFiltreInstrument, cboDegMal, cboFiltreArme };
             foreach (System.Windows.Forms.ComboBox cbo in listesAliens)
             {
-                cbo.DropDownStyle = ComboBoxStyle.DropDownList;
+                //On garde l'apparence d'origine de la liste, mais on ne peut pas y taper de texte
+                cbo.KeyPress += delegate (object expediteur, KeyPressEventArgs touche) { touche.Handled = true; };
                 cbo.SelectedIndexChanged += delegate { if (grpFiltre.Visible) AppliquerFiltresAliens(); };
             }
             txtFiltreNom.TextChanged += delegate { if (grpFiltre.Visible) AppliquerFiltresAliens(); };
