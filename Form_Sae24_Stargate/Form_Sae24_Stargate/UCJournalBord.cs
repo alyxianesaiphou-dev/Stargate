@@ -64,7 +64,7 @@ namespace Form_Sae24_Stargate
 
                 MettreAJourCompteur();
 
-                //depense
+                //dépense
                 string reqDep = @"SELECT * FROM Depense
                                 WHERE numeroMission = " + numeroEnCours + @"
                                 AND nomPlanete = '" + planeteEnCours + "'";
@@ -171,10 +171,10 @@ namespace Form_Sae24_Stargate
                 if (!dataSetGlobal.Tables.Contains(nomTableBilan))
                 {
                     DataTable dtBilan = new DataTable(nomTableBilan);
-                    dtBilan.Columns.Add("Nom de l'espece", typeof(string));
+                    dtBilan.Columns.Add("Nom de l'espèce", typeof(string));
                     dtBilan.Columns.Add("Objectif initial", typeof(int));
                     dtBilan.Columns.Add("Nombre de captures", typeof(int));
-                    dtBilan.Columns.Add("Taux de reussite", typeof(string));
+                    dtBilan.Columns.Add("Taux de réussite", typeof(string));
 
                     dataSetGlobal.Tables.Add(dtBilan);
                 }

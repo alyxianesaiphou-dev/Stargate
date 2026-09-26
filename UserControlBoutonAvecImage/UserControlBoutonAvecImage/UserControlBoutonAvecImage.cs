@@ -39,7 +39,7 @@ namespace UserControlBoutonAvecImage
             set { this.picBouton.Image = value; }
         }
 
-        //Evénement lorsqu'on clique sur le bouton complet
+        //Événement lorsqu'on clique sur le bouton complet
         private void btnImage_Click(object sender, EventArgs e)
         {
             // Si une méthode a bien été assignée au delegate

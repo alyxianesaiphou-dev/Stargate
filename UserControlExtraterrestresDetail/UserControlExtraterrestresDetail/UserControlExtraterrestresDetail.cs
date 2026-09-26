@@ -23,7 +23,7 @@ namespace UserControlExtraterrestresDetail
         public UCExtraterrestresDetail(String nom, String couleur, String statut, String planete, String premierContact, String instrumentOuArme, String degre)
         {
             InitializeComponent();
-            //Récûperer le chemin pour les images sur chaque pc
+            //Récupérer le chemin pour les images sur chaque pc
             string chemin = @"Images\Extraterrestres\" + nom + ".png";
             picAlien.Image = Image.FromFile(chemin);
             lblNomExtraterrestre.Text = nom;

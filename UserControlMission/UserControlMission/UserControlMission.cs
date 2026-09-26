@@ -42,7 +42,7 @@ namespace UserControlMission
             this.planete = nomPlanete;
             this.numero = numeroMission;
 
-            //Récûperer le chemin pour les images sur chaque pc
+            //Récupérer le chemin pour les images sur chaque pc
             string chemin = @"Images\Planetes\" + nomPlanete + ".png";
             picPlanete.Image = Image.FromFile(chemin);
             grpMission.Text = nomPlanete + numeroMission;

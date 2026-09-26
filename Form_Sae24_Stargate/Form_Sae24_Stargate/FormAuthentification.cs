@@ -53,7 +53,7 @@ namespace Form_Sae24_Stargate
                     }
                     else
                     {
-                        MessageBox.Show("Echec de l'authentification", "Accès refusé");
+                        MessageBox.Show("Échec de l'authentification", "Accès refusé");
                         txtMdp.Clear();
                         txtMdp.Focus();
                     }

@@ -87,7 +87,7 @@
             this.lblPlanete.Name = "lblPlanete";
             this.lblPlanete.Size = new System.Drawing.Size(81, 25);
             this.lblPlanete.TabIndex = 7;
-            this.lblPlanete.Text = "Planete";
+            this.lblPlanete.Text = "Planète";
             // 
             // picExtraterrestre
             // 

@@ -61,7 +61,7 @@
             this.lblPlanete.Name = "lblPlanete";
             this.lblPlanete.Size = new System.Drawing.Size(53, 16);
             this.lblPlanete.TabIndex = 14;
-            this.lblPlanete.Text = "Planete";
+            this.lblPlanete.Text = "Planète";
             // 
             // lblSpecialiteGrade
             // 
@@ -70,7 +70,7 @@
             this.lblSpecialiteGrade.Name = "lblSpecialiteGrade";
             this.lblSpecialiteGrade.Size = new System.Drawing.Size(109, 16);
             this.lblSpecialiteGrade.TabIndex = 12;
-            this.lblSpecialiteGrade.Text = "Specialite/Grade";
+            this.lblSpecialiteGrade.Text = "Spécialité/Grade";
             // 
             // lblDateDeNaissance
             // 

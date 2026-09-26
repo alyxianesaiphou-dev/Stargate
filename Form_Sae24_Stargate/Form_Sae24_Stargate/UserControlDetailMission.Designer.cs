@@ -82,7 +82,7 @@
             this.lblRetour.Name = "lblRetour";
             this.lblRetour.Size = new System.Drawing.Size(192, 24);
             this.lblRetour.TabIndex = 3;
-            this.lblRetour.Text = "Date de retour prevu :";
+            this.lblRetour.Text = "Date de retour prévue :";
             // 
             // lblSolde
             // 
@@ -206,7 +206,7 @@
             this.btnEditerMission.Name = "btnEditerMission";
             this.btnEditerMission.Size = new System.Drawing.Size(168, 53);
             this.btnEditerMission.TabIndex = 15;
-            this.btnEditerMission.Text = "Editer la mission";
+            this.btnEditerMission.Text = "Éditer la mission";
             this.btnEditerMission.UseVisualStyleBackColor = false;
             this.btnEditerMission.Visible = false;
             this.btnEditerMission.Click += new System.EventHandler(this.btnEditerMission_Click);

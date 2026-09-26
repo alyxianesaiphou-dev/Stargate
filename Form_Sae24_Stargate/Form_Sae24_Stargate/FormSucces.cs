@@ -70,7 +70,7 @@ namespace Form_Sae24_Stargate
             this.Close();
         }
 
-        //permet de l'appeler n'import ou
+        //permet de l'appeler n'importe où
         public static void Afficher(string message, bool estErreur = false)
         {
             //on crée la fenêtre avec le message voulu
