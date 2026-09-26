@@ -21,6 +21,9 @@ namespace Form_Sae24_Stargate
             this.Controls.Add(alienDetail);
             this.ClientSize = new System.Drawing.Size(730, 190);
             this.StartPosition = FormStartPosition.CenterScreen;
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         public FormClickDetail(UCPlaneteDetail planeteDetail)
@@ -30,6 +33,9 @@ namespace Form_Sae24_Stargate
             this.Text = "Détails planète";
             this.ClientSize = new System.Drawing.Size(1300, 750);
             this.StartPosition = FormStartPosition.CenterScreen;
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         public FormClickDetail(UserControlMissionDetail missionDetail)
@@ -48,6 +54,9 @@ namespace Form_Sae24_Stargate
             //empêche le redimensionnement manuel 
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         public FormClickDetail(UCEquipageDetail detailEquipage)
@@ -57,6 +66,9 @@ namespace Form_Sae24_Stargate
             this.Text = "Détails équipage";
             this.ClientSize = new System.Drawing.Size(600, 525);
             this.StartPosition = FormStartPosition.CenterScreen;
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
     }

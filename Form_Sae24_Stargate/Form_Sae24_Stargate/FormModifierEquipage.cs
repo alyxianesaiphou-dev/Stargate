@@ -35,6 +35,9 @@ namespace Form_Sae24_Stargate
 
             ConstruireFenetre();
             ChargerMission();
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         private void ConstruireFenetre()

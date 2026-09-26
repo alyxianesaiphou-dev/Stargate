@@ -231,6 +231,9 @@ namespace Form_Sae24_Stargate
                 fenetreEdition.Controls.Add(ucEdition);
                 ucEdition.Location = new Point(0, 0);
 
+                //tout s'agrandit ou se réduit avec l'écran
+                AdaptationEcran.Activer(fenetreEdition);
+
                 fenetreEdition.ShowDialog();
 
                 this.ChargerMission(this.numeroMissionActuelle, this.planeteActuelle);
@@ -259,6 +262,9 @@ namespace Form_Sae24_Stargate
 
                 fenetreJournal.Controls.Add(ucJournal);
                 ucJournal.Location = new Point(0, 0);
+
+                //tout s'agrandit ou se réduit avec l'écran
+                AdaptationEcran.Activer(fenetreJournal);
 
 
                 fenetreJournal.ShowDialog();

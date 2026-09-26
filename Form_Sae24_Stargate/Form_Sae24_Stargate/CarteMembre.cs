@@ -142,11 +142,24 @@ namespace Form_Sae24_Stargate
 
         public static void CentrerColonnes(FlowLayoutPanel panneau, int largeurCarte, int margeCarte)
         {
+            //les cartes sont agrandies comme la fenêtre (voir AdaptationEcran)
+            float facteur = AdaptationEcran.Facteur(panneau);
+            int largeurColonne = (int)Math.Round(largeurCarte * facteur) + 2 * (int)Math.Round(margeCarte * facteur);
+
             int largeurUtile = panneau.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 4;
-            int largeurColonne = largeurCarte + 2 * margeCarte;
             int nbColonnes = Math.Max(1, largeurUtile / largeurColonne);
             int marge = Math.Max(0, (largeurUtile - nbColonnes * largeurColonne) / 2);
-            panneau.Padding = new Padding(marge, 6, 0, 6);
+            panneau.Padding = new Padding(marge, (int)Math.Round(6 * facteur), 0, (int)Math.Round(6 * facteur));
+
+            //on recentre quand le panneau change de taille (fenêtre agrandie)
+            if (!panneauxCentres.Contains(panneau))
+            {
+                panneauxCentres.Add(panneau);
+                panneau.Resize += delegate { CentrerColonnes(panneau, largeurCarte, margeCarte); };
+                panneau.Disposed += delegate { panneauxCentres.Remove(panneau); };
+            }
         }
+
+        private static readonly System.Collections.Generic.HashSet<FlowLayoutPanel> panneauxCentres = new System.Collections.Generic.HashSet<FlowLayoutPanel>();
     }
 }

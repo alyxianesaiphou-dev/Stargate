@@ -23,6 +23,9 @@ namespace Form_Sae24_Stargate
             
 
             ChargerLesDonneesDuMembre();
+
+            //tout s'agrandit ou se réduit avec l'écran
+            AdaptationEcran.Activer(this);
         }
 
         private void ChargerLesDonneesDuMembre()
