@@ -113,7 +113,7 @@ namespace Form_Sae24_Stargate
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(106, 20);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Appreciation :";
+            this.label4.Text = "Appréciation :";
             // 
             // label3
             // 
@@ -247,7 +247,7 @@ namespace Form_Sae24_Stargate
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(71, 20);
             this.label14.TabIndex = 6;
-            this.label14.Text = "Espece :";
+            this.label14.Text = "Espèce :";
             // 
             // btnAnnulerCapture
             // 
@@ -471,7 +471,7 @@ namespace Form_Sae24_Stargate
             this.gpbNvEvenement.Size = new System.Drawing.Size(419, 495);
             this.gpbNvEvenement.TabIndex = 11;
             this.gpbNvEvenement.TabStop = false;
-            this.gpbNvEvenement.Text = "Nouvel évenement";
+            this.gpbNvEvenement.Text = "Nouvel événement";
             this.gpbNvEvenement.Visible = false;
             // 
             // label9

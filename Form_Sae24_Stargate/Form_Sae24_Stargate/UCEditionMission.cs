@@ -45,7 +45,7 @@ namespace Form_Sae24_Stargate
 
                 readerInf.Close();
 
-                //type depense
+                //type dépense
                 SQLiteCommand cmdType = new SQLiteCommand("SELECT * FROM TypeDepense WHERE id <> 2", maConnexion);
                 SQLiteDataReader readerType = cmdType.ExecuteReader();
 
@@ -59,7 +59,7 @@ namespace Form_Sae24_Stargate
 
                 readerType.Close();
 
-                //espece
+                //espèce
                 SQLiteCommand cmdEsp = new SQLiteCommand("SELECT * FROM Allie", maConnexion);
                 SQLiteDataReader readerEsp = cmdEsp.ExecuteReader();
 
@@ -113,7 +113,7 @@ namespace Form_Sae24_Stargate
                     return;
                 }
 
-                //verifie le doublon
+                //vérifie le doublon
                 string reqVerif =
                     @"SELECT COUNT(*)
                     FROM Contact
@@ -424,7 +424,7 @@ namespace Form_Sae24_Stargate
         {
             try
             {
-                //verifie que l'utilisateur a mis plus que 0
+                //vérifie que l'utilisateur a mis plus que 0
                 if (cmbEspece.SelectedValue == null || nudNombreCapture.Value <= 0)
                 {
                     FormSucces.Afficher("Veuillez sélectionner une espèce et un nombre supérieur à 0.", true);

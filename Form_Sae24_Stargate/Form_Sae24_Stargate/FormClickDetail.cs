@@ -54,7 +54,7 @@ namespace Form_Sae24_Stargate
         {
             InitializeComponent();
             this.Controls.Add(detailEquipage);
-            this.Text = "Détails equipage";
+            this.Text = "Détails équipage";
             this.ClientSize = new System.Drawing.Size(600, 525);
             this.StartPosition = FormStartPosition.CenterScreen;
         }

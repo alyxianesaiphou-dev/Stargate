@@ -49,7 +49,7 @@ namespace Form_Sae24_Stargate
 
                     lblDateDep.Text = "Date de départ : " + Convert.ToDateTime(reader["dateDepart"]).ToString("dd/MM/yyyy");
 
-                    lblRetour.Text = "Date de retour prévu : " + Convert.ToDateTime(reader["dateRetour"]).ToString("dd/MM/yyyy");
+                    lblRetour.Text = "Date de retour prévue : " + Convert.ToDateTime(reader["dateRetour"]).ToString("dd/MM/yyyy");
 
                     lblDatabaz.Text = "Objectif Databaz : " + reader["objectifDatabaz"].ToString() + " tonnes";
 
@@ -216,7 +216,7 @@ namespace Form_Sae24_Stargate
                 //crée une fenêtre vide
                 Form fenetreEdition = new Form();
 
-                // prendre la taille exacte du user controle
+                // prendre la taille exacte du UserControl
                 fenetreEdition.ClientSize = ucEdition.Size;
                 fenetreEdition.FormBorderStyle = FormBorderStyle.FixedDialog; //empêche de redimensionner
                 fenetreEdition.StartPosition = FormStartPosition.CenterScreen; //centre à l'écran
@@ -245,7 +245,7 @@ namespace Form_Sae24_Stargate
                 //crée une fenêtre vide
                 Form fenetreJournal = new Form();
 
-                //prendre la taille exacte du user controle
+                //prendre la taille exacte du UserControl
                 fenetreJournal.ClientSize = ucJournal.Size;
                 fenetreJournal.FormBorderStyle = FormBorderStyle.FixedDialog; //empêche de redimensionner
                 fenetreJournal.StartPosition = FormStartPosition.CenterScreen; //centre à l'écran

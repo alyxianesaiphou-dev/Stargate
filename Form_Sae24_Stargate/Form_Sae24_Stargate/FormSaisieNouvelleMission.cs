@@ -689,7 +689,7 @@ namespace Form_Sae24_Stargate
 
                 try
                 {
-                    //numero mission
+                    //numéro mission
                     int nouveauNumero = 1;
 
                     string reqMax = "SELECT MAX(numero) FROM Mission WHERE nomPlanete = @planete";

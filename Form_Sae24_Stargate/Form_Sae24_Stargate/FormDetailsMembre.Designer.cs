@@ -55,7 +55,7 @@
             this.lblSpeGrade.Name = "lblSpeGrade";
             this.lblSpeGrade.Size = new System.Drawing.Size(153, 25);
             this.lblSpeGrade.TabIndex = 1;
-            this.lblSpeGrade.Text = "Specialite/grade";
+            this.lblSpeGrade.Text = "Spécialité/grade";
             // 
             // lblOrigine
             // 
@@ -64,7 +64,7 @@
             this.lblOrigine.Name = "lblOrigine";
             this.lblOrigine.Size = new System.Drawing.Size(172, 25);
             this.lblOrigine.TabIndex = 2;
-            this.lblOrigine.Text = "Planete d\'origine : ";
+            this.lblOrigine.Text = "Planète d\'origine : ";
             // 
             // label4
             // 
@@ -102,7 +102,7 @@
             this.lblNom.Name = "lblNom";
             this.lblNom.Size = new System.Drawing.Size(154, 29);
             this.lblNom.TabIndex = 14;
-            this.lblNom.Text = "Nom prenom";
+            this.lblNom.Text = "Nom prénom";
             // 
             // picMembre
             // 

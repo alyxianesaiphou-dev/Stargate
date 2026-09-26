@@ -68,7 +68,7 @@
             this.gpbEvenements.Size = new System.Drawing.Size(623, 185);
             this.gpbEvenements.TabIndex = 0;
             this.gpbEvenements.TabStop = false;
-            this.gpbEvenements.Text = "Evenements du journal";
+            this.gpbEvenements.Text = "Événements du journal";
             // 
             // lblCompteur
             // 
@@ -198,7 +198,7 @@
             this.gpbDepenses.Size = new System.Drawing.Size(530, 415);
             this.gpbDepenses.TabIndex = 2;
             this.gpbDepenses.TabStop = false;
-            this.gpbDepenses.Text = "Dépenses effectués";
+            this.gpbDepenses.Text = "Dépenses effectuées";
             // 
             // dgvDepenses
             // 

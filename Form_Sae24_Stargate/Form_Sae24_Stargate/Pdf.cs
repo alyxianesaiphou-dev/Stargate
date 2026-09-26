@@ -67,7 +67,7 @@ public static class Pdf
             }
 
 
-            //police d'ecriture
+            //police d'écriture
             Font policeTitre = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.BLACK);
             Font sousTitre = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
             Font text = FontFactory.GetFont(FontFactory.HELVETICA, 14, BaseColor.BLACK);
@@ -83,7 +83,7 @@ public static class Pdf
             PdfPCell caseTitre = new PdfPCell(new Phrase("RAPPORT DE MISSION N°" + numeroMission, policeTitre));
             caseTitre.HorizontalAlignment = Element.ALIGN_CENTER;
             caseTitre.VerticalAlignment = Element.ALIGN_MIDDLE;
-            caseTitre.BorderWidth = 2f; //epaisseur trait 
+            caseTitre.BorderWidth = 2f; //épaisseur trait 
             caseTitre.BorderColor = BaseColor.BLACK; //couleur trait
             caseTitre.Padding = 15f; //espace blanc entre texte et cadre
             tableauTitre.AddCell(caseTitre);
@@ -139,7 +139,7 @@ public static class Pdf
 
 
 
-            //ajout des depenses + bilan depense
+            //ajout des dépenses + bilan dépense
             monDocument.Add(new Paragraph("--------------------------------------------------------------------------", policeTitre));
 
             double budgetInitial = 0;
@@ -259,7 +259,7 @@ public static class Pdf
                     dateFormatee = Convert.ToDateTime(ligne["dateC"]).ToString("dd/MM/yyyy");
                 }
 
-                //creer liste vide
+                //créer liste vide
                 ListItem itemInformateur = new ListItem();
                 itemInformateur.Leading = 18f; //aérer l'espacement des ligne
 
@@ -335,7 +335,7 @@ public static class Pdf
                     dateFormatee = Convert.ToDateTime(ligne["dateJ"]).ToString("dd/MM/yyyy");
                 }
 
-                //creer le paragraphe
+                //créer le paragraphe
                 Paragraph pEntreeJournal = new Paragraph();
                 pEntreeJournal.Leading = 18f; //espacement des lignes si le texte est sur plusieurs lignes
                 pEntreeJournal.Alignment = Element.ALIGN_JUSTIFIED;
@@ -424,7 +424,7 @@ public static class Pdf
             }
             else
             {
-                //si il n'y a pas de negociation
+                //s'il n'y a pas de négociation
                 tableBilanDataBaz.Rows.Add("Aucune", "Aucun", "0 tonne");
             }
 
@@ -512,7 +512,7 @@ public static class Pdf
         }
     }
 
-    //pour le nummero de la page
+    //pour le numéro de la page
     public class PiedDePage : PdfPageEventHelper
     {
         public override void OnEndPage(PdfWriter writer, Document document)
