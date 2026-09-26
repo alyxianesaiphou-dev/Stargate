@@ -108,6 +108,11 @@ namespace Form_Sae24_Stargate
             System.Drawing.Rectangle zone = AdaptationEcran.BornesDeBase(tabAffichage);
             System.Drawing.Rectangle zoneFiltres = AdaptationEcran.BornesDeBase(filtres);
 
+            //sans jamais dépasser de la fenêtre (marge de 20 à droite et en bas)
+            System.Drawing.Size fenetre = AdaptationEcran.TailleDeBase(this);
+            zone.Width = Math.Min(zone.Width, fenetre.Width - 20 - zone.Left);
+            zone.Height = Math.Min(zone.Height, fenetre.Height - 20 - zone.Top);
+
             filtres.Location = new System.Drawing.Point(zone.Left, zone.Top);
             filtres.Size = new System.Drawing.Size(zone.Width, zoneFiltres.Height);
 
