@@ -36,9 +36,15 @@ namespace Form_Sae24_Stargate
         //UCBtn permettant de savoir quel bouton est sélectionné et le colorer
         private UCBoutonImage btnActif = null;
 
+        //Vrai pendant qu'on vide tous les filtres d'un coup, pour ne réafficher qu'une fois à la fin
+        private bool majFiltresSuspendue = false;
+
         public FormAccueil()
         {
             InitializeComponent();
+
+            //Les filtres aliens et planètes s'appliquent dès qu'on les change
+            BrancherFiltresAutomatiques();
 
             //tout s'agrandit ou se réduit avec l'écran
             AdaptationEcran.Activer(this);
@@ -563,8 +569,8 @@ namespace Form_Sae24_Stargate
             //Ajout du flpAffichage
             this.Controls.Add(flpAffichage);
 
-            //Remplir flpAffichage avec les usercontrols
-            flpAffichageTrombinoAlien(MesDatas.DsGlobal.Tables["dtAlien"], flpAffichage);
+            //Remplir flpAffichage avec les aliens qui respectent les filtres déjà choisis
+            AppliquerFiltresAliens();
 
         }
 
@@ -654,164 +660,136 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void btnAppliquerFiltre_Click(object sender, EventArgs e)
         {
-            //Création d'un dictionnaire pour stocker le type de filtre et sa valeur
-            Dictionary<string, string> filtres = new Dictionary<string, string>();
-            string nom = string.Empty;
-            string couleur = string.Empty;
-            string statut = string.Empty;
-            string degreBienveillance = string.Empty;
-            string instrumentMusique = string.Empty;
-            string degreAgressivite = string.Empty;
-            string typeArme = string.Empty;
-            string planete = string.Empty;
-
-            //Remplissage des valeurs de filtres
-            if (txtFiltreNom.Text != string.Empty)
-            {
-                nom = txtFiltreNom.Text;
-            }
-            couleur = cboFiltreCouleur.Text.ToString();
-            planete = cboFiltrePlanete.Text.ToString();
-            if (ckbFiltreAllie.Checked)
-            {
-                statut = "Allié";
-                degreBienveillance = cboDegBien.Text.ToString();
-                instrumentMusique = cboFiltreInstrument.Text.ToString();
-            }
-            if (ckbFiltreEnnemi.Checked)
-            {
-                statut = "Ennemi";
-                degreAgressivite = cboDegMal.Text.ToString();
-                typeArme = cboFiltreArme.Text.ToString();
-            }
-            if (ckbFiltreNeutre.Checked)
-            {
-                statut = "Neutre";
-            }
-
-            //Ajout des couples clé-valeur au dictionnaire
-            filtres.Add("couleur", couleur);
-            filtres.Add("nom", nom);
-            filtres.Add("planete", planete);
-            filtres.Add("statut", statut);
-            filtres.Add("degreBienveillance", degreBienveillance);
-            filtres.Add("instrumentMusique", instrumentMusique);
-            filtres.Add("typeArme", typeArme);
-            filtres.Add("degreAgressivite", degreAgressivite);
-
-            bool filtrePresent = false;
-            string filtreFinal = string.Empty;
-
-            foreach (String key in filtres.Keys)
-            {
-                if (key == "statut")
-                {
-                    //Si pas de statut sélectionné, tous les statuts sont pris en compte
-                    if (statut == string.Empty)
-                    {
-                        filtreFinal += "(statut = 'Allié' OR statut='Ennemi' OR statut = 'Neutre')";
-                    }
-                    else
-                    {
-                        //Choix des statuts
-                        filtreFinal += "(";
-                        if (ckbFiltreAllie.Checked)
-                        {
-                            filtreFinal += "(" + key + " = '" + "Allié'";
-                            //Vérif filtre degreBienveillance
-                            if (filtres["degreBienveillance"] != "")
-                            {
-                                filtreFinal += " AND degreBienveillance = '" + filtres["degreBienveillance"] + "'";
-                            }
-                            //Vérif filtre instrumentMusique
-                            if (filtres["instrumentMusique"] != "")
-                            {
-                                filtreFinal += " AND instrumentMusique = '" + filtres["instrumentMusique"] + "'";
-                            }
-                            filtreFinal += ") OR ";
-                        }
-                        if (ckbFiltreEnnemi.Checked)
-                        {
-                            filtreFinal += "(" + key + " = '" + "Ennemi'";
-                            //Vérif filtre degreAgressivite
-                            if (filtres["degreAgressivite"] != "")
-                            {
-                                filtreFinal += " AND degreAgressivite = '" + filtres["degreAgressivite"] + "'";
-                            }
-                            //Vérif filtre typeArme
-                            if (filtres["typeArme"] != "")
-                            {
-                                filtreFinal += " AND typeArme = '" + filtres["typeArme"] + "'";
-                            }
-                            filtreFinal += ") OR ";
-                        }
-                        if (ckbFiltreNeutre.Checked)
-                        {
-                            filtreFinal += key + " = 'Neutre' OR";
-                        }
-                        filtreFinal = filtreFinal.Substring(0, filtreFinal.Length - 3);
-                        filtreFinal += ")";
-                    }
-                }
-                if (filtres[key] != string.Empty)
-                {
-                    //Recherche avec un like pour nom et planète
-                    filtrePresent = true;
-                    if (key == "nom" || key == "planete")
-                    {
-                        filtreFinal += key + " like '%" + filtres[key].ToLower() + "%' AND ";
-                    }
-                    //Recherche classique pour la couleur
-                    else if (key == "couleur")
-                    {
-                        filtreFinal += key + " = '" + filtres[key] + "' AND ";
-                    }
-                }
-            }
-
-            //Si au moins un filtre a été sélectionné
-            if (filtrePresent)
-            {
-                //Recherche filtrée dans la table dtAlien
-                DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtAlien"].Select(filtreFinal);
-
-                //S'il y a des aliens qui correspondent au filtre
-                if (rowResultat.Length > 0)
-                {
-                    DataTable dtFiltre = rowResultat.CopyToDataTable();
-                    //Affichage des aliens
-                    flpAffichageTrombinoAlien(dtFiltre, flpAffichage);
-                }
-                //Si aucun alien ne correspond au filtre
-                else
-                {
-                    //Ajout d'un label "aucun alien correspondant"
-                    MessageBox.Show("Pas d'alien avec ces filtres");
-                    Label lblAucunResultatFiltre = new System.Windows.Forms.Label();
-                    lblAucunResultatFiltre.AutoSize = true;
-                    lblAucunResultatFiltre.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-                    lblAucunResultatFiltre.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                    lblAucunResultatFiltre.ForeColor = System.Drawing.Color.White;
-                    lblAucunResultatFiltre.Name = "lblAucunResultatFiltre";
-                    lblAucunResultatFiltre.Size = new System.Drawing.Size(580, 36);
-                    lblAucunResultatFiltre.Text = "Aucun alien correspondant à ces filtres";
-
-                    //Aucun alien dans flpAffichage
-                    flpAffichage.Controls.Clear();
-                    //Ajout du label
-                    flpAffichage.Controls.Add(lblAucunResultatFiltre);
-                }
-
-            }
-            //Si clic 'Appliquer' sans bouton sélectionné
-            else
-            {
-                //Affichage de la totalité des aliens
-                flpAffichageTrombinoAlien(MesDatas.DsGlobal.Tables["dtAlien"], flpAffichage);
-            }
-
+            AppliquerFiltresAliens();
         }
 
+        /****************************************************************************************************************************************************************************/
+        /// <summary>
+        /// Affiche dans flpAffichage les cartes des aliens qui respectent tous les filtres choisis.
+        /// Un filtre laissé vide ne filtre rien. Si aucun statut n'est coché, tous les statuts sont gardés ;
+        /// sinon on garde les aliens d'un des statuts cochés, avec les filtres propres à ce statut
+        /// (bienveillance et instrument pour les alliés, agressivité et arme pour les ennemis).
+        /// </summary>
+        private void AppliquerFiltresAliens()
+        {
+            if (majFiltresSuspendue || flpAffichage == null)
+            {
+                return;
+            }
+
+            string nom = txtFiltreNom.Text.Trim();
+            string couleur = cboFiltreCouleur.Text;
+            string planete = cboFiltrePlanete.Text;
+            bool allie = ckbFiltreAllie.Checked;
+            bool ennemi = ckbFiltreEnnemi.Checked;
+            bool neutre = ckbFiltreNeutre.Checked;
+            bool statutChoisi = allie || ennemi || neutre;
+
+            List<DataRow> resultat = new List<DataRow>();
+            foreach (DataRow dr in MesDatas.DsGlobal.Tables["dtAlien"].Rows)
+            {
+                //Nom : contient le texte tapé, sans tenir compte des majuscules
+                if (nom != string.Empty && dr["nom"].ToString().IndexOf(nom, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    continue;
+                }
+                //Couleur : exactement celle choisie
+                if (couleur != string.Empty && dr["couleur"].ToString() != couleur)
+                {
+                    continue;
+                }
+                //Planète : l'alien habite exactement cette planète (pas juste un nom qui la contient)
+                if (planete != string.Empty && !dr["planete"].ToString().Split('/').Contains(planete))
+                {
+                    continue;
+                }
+                //Statut
+                if (statutChoisi)
+                {
+                    string statut = dr["statut"].ToString();
+                    bool garde = false;
+                    if (allie && statut == "Allié"
+                        && (cboDegBien.Text == string.Empty || dr["degreBienveillance"].ToString() == cboDegBien.Text)
+                        && (cboFiltreInstrument.Text == string.Empty || dr["instrumentMusique"].ToString() == cboFiltreInstrument.Text))
+                    {
+                        garde = true;
+                    }
+                    if (ennemi && statut == "Ennemi"
+                        && (cboDegMal.Text == string.Empty || dr["degreAgressivite"].ToString() == cboDegMal.Text)
+                        && (cboFiltreArme.Text == string.Empty || dr["typeArme"].ToString() == cboFiltreArme.Text))
+                    {
+                        garde = true;
+                    }
+                    if (neutre && statut == "Neutre")
+                    {
+                        garde = true;
+                    }
+                    if (!garde)
+                    {
+                        continue;
+                    }
+                }
+                resultat.Add(dr);
+            }
+
+            if (resultat.Count > 0)
+            {
+                flpAffichageTrombinoAlien(resultat.CopyToDataTable(), flpAffichage);
+            }
+            else
+            {
+                AfficherAucunResultat("Aucun alien correspondant à ces filtres");
+            }
+        }
+
+        /****************************************************************************************************************************************************************************/
+        /// <summary>
+        /// Vide flpAffichage et y affiche un message quand aucun résultat ne correspond aux filtres
+        /// </summary>
+        private void AfficherAucunResultat(string message)
+        {
+            System.Windows.Forms.Label lblAucunResultatFiltre = new System.Windows.Forms.Label();
+            lblAucunResultatFiltre.AutoSize = true;
+            lblAucunResultatFiltre.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            lblAucunResultatFiltre.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblAucunResultatFiltre.ForeColor = System.Drawing.Color.White;
+            lblAucunResultatFiltre.Name = "lblAucunResultatFiltre";
+            lblAucunResultatFiltre.Size = new System.Drawing.Size(580, 36);
+            lblAucunResultatFiltre.Text = message;
+
+            flpAffichage.Controls.Clear();
+            flpAffichage.Controls.Add(lblAucunResultatFiltre);
+        }
+
+        /****************************************************************************************************************************************************************************/
+        /// <summary>
+        /// Les filtres s'appliquent tout seuls dès qu'on tape ou coche quelque chose
+        /// (le bouton Appliquer marche toujours). Les listes des filtres ne se tapent plus à la main :
+        /// on choisit forcément une valeur qui existe.
+        /// </summary>
+        private void BrancherFiltresAutomatiques()
+        {
+            System.Windows.Forms.ComboBox[] listesAliens = { cboFiltreCouleur, cboFiltrePlanete, cboDegBien, cboFiltreInstrument, cboDegMal, cboFiltreArme };
+            foreach (System.Windows.Forms.ComboBox cbo in listesAliens)
+            {
+                cbo.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbo.SelectedIndexChanged += delegate { if (grpFiltre.Visible) AppliquerFiltresAliens(); };
+            }
+            txtFiltreNom.TextChanged += delegate { if (grpFiltre.Visible) AppliquerFiltresAliens(); };
+            foreach (System.Windows.Forms.CheckBox ckb in new[] { ckbFiltreAllie, ckbFiltreEnnemi, ckbFiltreNeutre })
+            {
+                ckb.CheckedChanged += delegate { if (grpFiltre.Visible) AppliquerFiltresAliens(); };
+            }
+
+            foreach (System.Windows.Forms.TextBox txt in new[] { txtFiltreNomPlanete, txtTempMin, txtTempMax, txtGraviteMin, txtGraviteMax })
+            {
+                txt.TextChanged += delegate { if (grpFiltrePlanete.Visible) AppliquerFiltresPlanetes(); };
+            }
+            foreach (System.Windows.Forms.CheckBox ckb in new[] { ckbPDataBaz, ckbADataBaz, ckbDataBazInconnu })
+            {
+                ckb.CheckedChanged += delegate { if (grpFiltrePlanete.Visible) AppliquerFiltresPlanetes(); };
+            }
+        }
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
@@ -821,6 +799,8 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void btnSupprimerFiltre_Click(object sender, EventArgs e)
         {
+            //On vide tout d'abord, puis on réaffiche une seule fois
+            majFiltresSuspendue = true;
             txtFiltreNom.Clear();
             ComboVide.Vider(cboFiltreCouleur);
             ckbFiltreAllie.Checked = false;
@@ -831,11 +811,11 @@ namespace Form_Sae24_Stargate
             ComboVide.Vider(cboFiltreInstrument);
             ComboVide.Vider(cboDegMal);
             ComboVide.Vider(cboFiltreArme);
+            majFiltresSuspendue = false;
 
             //Réafficher la totalité des aliens
-            flpAffichageTrombinoAlien(MesDatas.DsGlobal.Tables["dtAlien"], flpAffichage);
+            AppliquerFiltresAliens();
         }
-
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
@@ -968,8 +948,8 @@ namespace Form_Sae24_Stargate
             //Ajout du flpAffichage
             this.Controls.Add(flpAffichage);
 
-            //Remplir flpAffichage avec les usercontrols
-            flpAffichageTrombinoPlanetes(MesDatas.DsGlobal.Tables["dtPlanetes"]);
+            //Remplir flpAffichage avec les planètes qui respectent les filtres déjà choisis
+            AppliquerFiltresPlanetes();
         }
 
         /****************************************************************************************************************************************************************************/
@@ -1028,9 +1008,9 @@ namespace Form_Sae24_Stargate
             lblAucunResultatAlien.Size = new System.Drawing.Size(580, 36);
 
             //Remplir le flp des espèces présentes sur la planète
-            string filtreEspece = "planete like '%" + planeteDetail.nomPlanete + "%'";
-            //Récupère les espèces présentes sur la planète
-            DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtAlien"].Select(filtreEspece);
+            //Récupère les espèces présentes sur cette planète exactement (pas celles d'une planète au nom proche)
+            DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtAlien"].AsEnumerable()
+                .Where(ligneAlien => ligneAlien["planete"].ToString().Split('/').Contains(planeteDetail.nomPlanete)).ToArray();
             //S'il y a des espèces
             if (rowResultat.Length > 0)
             {
@@ -1063,7 +1043,7 @@ namespace Form_Sae24_Stargate
             }
 
             //Remplir le flp des missions sur la planète
-            string filtreMission = "nomPlanete like '%" + planeteDetail.nomPlanete + "%'";
+            string filtreMission = "nomPlanete = '" + planeteDetail.nomPlanete.Replace("'", "''") + "'";
             DataRow[] rowResultatMission = MesDatas.DsGlobal.Tables["Mission"].Select(filtreMission);
             //S'il y a eu des missions
             if (rowResultatMission.Length > 0)
@@ -1106,156 +1086,104 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void btnAppliquerFiltrePlanete_Click(object sender, EventArgs e)
         {
-            //Création d'un dictionnaire pour stocker le type de filtre et sa valeur
-            Dictionary<string, string> filtres = new Dictionary<string, string>();
-            string nom = string.Empty;
-            string tempMin = string.Empty;
-            string tempMax = string.Empty;
-            string graviteMin = string.Empty;
-            string graviteMax = string.Empty;
-            string dataBaz = string.Empty;
+            AppliquerFiltresPlanetes();
+        }
 
-            //Remplissage des valeurs de filtres
-            if (txtFiltreNomPlanete.Text != string.Empty)
+        /****************************************************************************************************************************************************************************/
+        /// <summary>
+        /// Affiche dans flpAffichage les cartes des planètes qui respectent tous les filtres choisis.
+        /// Un champ vide ne filtre rien. Dès qu'une borne de température ou de gravité est remplie,
+        /// seules les planètes dont la valeur est connue et respecte cette borne restent
+        /// (une planète à température inconnue n'apparaît pas avec « température minimum : 10 »).
+        /// Les cases DataBaz gardent les planètes d'une des catégories cochées (aucune cochée = toutes).
+        /// </summary>
+        private void AppliquerFiltresPlanetes()
+        {
+            if (majFiltresSuspendue || flpAffichage == null)
             {
-                nom = txtFiltreNomPlanete.Text;
-            }
-            if (txtTempMin.Text != string.Empty)
-            {
-                tempMin = txtTempMin.Text;
-            }
-            if (txtTempMax.Text != string.Empty)
-            {
-                tempMax = txtTempMax.Text;
-            }
-            if (txtGraviteMin.Text != string.Empty)
-            {
-                graviteMin = txtGraviteMin.Text;
-            }
-            if (txtGraviteMax.Text != string.Empty)
-            {
-                graviteMax = txtGraviteMax.Text;
-            }
-            if (ckbPDataBaz.Checked || ckbADataBaz.Checked || ckbDataBazInconnu.Checked)
-            {
-                dataBaz = "oui";
+                return;
             }
 
-            //Ajout des couples clé-valeur au dictionnaire
-            filtres.Add("nom", nom);
-            filtres.Add("temperature", tempMin);
-            filtres.Add("gravite", graviteMin);
-            filtres.Add("dataBazON", dataBaz);
+            string nom = txtFiltreNomPlanete.Text.Trim();
+            decimal? tempMin = LireNombre(txtTempMin.Text);
+            decimal? tempMax = LireNombre(txtTempMax.Text);
+            decimal? graviteMin = LireNombre(txtGraviteMin.Text);
+            decimal? graviteMax = LireNombre(txtGraviteMax.Text);
+            bool dataBazChoisi = ckbPDataBaz.Checked || ckbADataBaz.Checked || ckbDataBazInconnu.Checked;
 
-            bool filtrePresent = false;
-            string filtreFinal = string.Empty;
-
-            foreach (String key in filtres.Keys)
+            DataTable dtPlanetes = MesDatas.DsGlobal.Tables["dtPlanetes"];
+            DataTable dtFiltre = dtPlanetes.Clone();
+            foreach (DataRow dr in dtPlanetes.Rows)
             {
-                if (key == "dataBazON")
+                //Nom : contient le texte tapé, sans tenir compte des majuscules
+                if (nom != string.Empty && dr["nom"].ToString().IndexOf(nom, StringComparison.OrdinalIgnoreCase) < 0)
                 {
-                    //Si pas de dataBaz sélectionné, tous les dataBaz sont pris en compte
-                    if (dataBaz == string.Empty)
+                    continue;
+                }
+                if (!DansLesBornes(dr["temperature"], tempMin, tempMax) || !DansLesBornes(dr["gravite"], graviteMin, graviteMax))
+                {
+                    continue;
+                }
+                if (dataBazChoisi)
+                {
+                    string dataBaz = dr["dataBazON"] == DBNull.Value ? string.Empty : Convert.ToInt32(dr["dataBazON"]).ToString();
+                    bool garde = (ckbPDataBaz.Checked && dataBaz == "1")
+                        || (ckbADataBaz.Checked && dataBaz == "0")
+                        || (ckbDataBazInconnu.Checked && dataBaz == string.Empty);
+                    if (!garde)
                     {
-                        filtrePresent = true;
-                        filtreFinal += "(dataBazON = '1' OR dataBazON = '0' OR dataBazON IS NULL)";
-                    }
-                    else
-                    {
-                        //Choix des dataBaz
-                        filtreFinal += "(";
-                        filtrePresent = true;
-                        if (ckbPDataBaz.Checked)
-                        {
-                            filtreFinal += "dataBazON = '1' OR ";
-                        }
-                        if (ckbADataBaz.Checked)
-                        {
-                            filtreFinal += "dataBazON = '0' OR ";
-                        }
-                        if (ckbDataBazInconnu.Checked)
-                        {
-                            filtreFinal += "dataBazON IS NULL OR ";
-                        }
-
-                        filtreFinal = filtreFinal.Substring(0, filtreFinal.Length - 3);
-                        filtreFinal += ")";
+                        continue;
                     }
                 }
-                if (filtres[key] != string.Empty)
-                {
-                    //Recherche avec un like pour nom
-                    filtrePresent = true;
-                    if (key == "nom")
-                    {
-                        filtreFinal += key + " like '%" + filtres[key].ToLower() + "%' AND ";
-                    }
-                    //Recherche avec < et > pour la gravité
-                    if (key == "gravite")
-                    {
-                        if (graviteMin != string.Empty)
-                        {
-                            filtreFinal += key + " >= " + graviteMin + " AND ";
-                        }
-                        if (graviteMax != string.Empty)
-                        {
-                            filtreFinal += key + " <= " + graviteMax + " AND ";
-                        }
-                    }
-                    //Recherche avec < et > pour la température
-                    if (key == "temperature")
-                    {
-                        if (tempMin != string.Empty)
-                        {
-                            filtreFinal += key + " >= " + tempMin + " AND ";
-                        }
-                        if (tempMax != string.Empty)
-                        {
-                            filtreFinal += key + " <= " + tempMax + " AND ";
-                        }
-                    }
-                }
+                dtFiltre.ImportRow(dr);
             }
-            //Si au moins un filtre a été sélectionné
-            if (filtrePresent)
+
+            if (dtFiltre.Rows.Count > 0)
             {
-                //Recherche filtrée dans la table dtPlanetes
-                DataRow[] rowResultat = MesDatas.DsGlobal.Tables["dtPlanetes"].Select(filtreFinal);
-
-                //S'il y a des planètes qui correspondent au filtre
-                if (rowResultat.Length > 0)
-                {
-                    DataTable dtFiltre = rowResultat.CopyToDataTable();
-                    //Affichage des planètes
-                    flpAffichageTrombinoPlanetes(dtFiltre);
-                }
-                //Si aucune planète ne correspond au filtre
-                else
-                {
-                    //Ajout d'un label "aucune planète correspondant"
-                    Label lblAucunResultatFiltre = new System.Windows.Forms.Label();
-                    lblAucunResultatFiltre.AutoSize = true;
-                    lblAucunResultatFiltre.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-                    lblAucunResultatFiltre.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                    lblAucunResultatFiltre.ForeColor = System.Drawing.Color.White;
-                    lblAucunResultatFiltre.Name = "lblAucunResultatFiltre";
-                    lblAucunResultatFiltre.Size = new System.Drawing.Size(580, 36);
-                    lblAucunResultatFiltre.Text = "Aucune planète correspondant à ces filtres";
-
-                    //Aucune planète dans flpAffichage
-                    flpAffichage.Controls.Clear();
-
-                    //Ajout du label
-                    flpAffichage.Controls.Add(lblAucunResultatFiltre);
-                }
-
+                flpAffichageTrombinoPlanetes(dtFiltre);
             }
-            //Si clic 'Appliquer' sans bouton sélectionné
             else
             {
-                //Affichage de la totalité des planètes
-                flpAffichageTrombinoPlanetes(MesDatas.DsGlobal.Tables["dtPlanetes"]);
+                AfficherAucunResultat("Aucune planète correspondant à ces filtres");
             }
+        }
+
+        /****************************************************************************************************************************************************************************/
+        /// <summary>
+        /// Lit un nombre tapé dans un filtre (virgule ou point acceptés). Renvoie null si le champ est vide
+        /// ou pas encore un nombre complet (par exemple juste « - »), pour ne pas filtrer pendant la frappe.
+        /// </summary>
+        private static decimal? LireNombre(string texte)
+        {
+            decimal valeur;
+            string nombre = texte.Trim().Replace(',', '.');
+            if (decimal.TryParse(nombre, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out valeur))
+            {
+                return valeur;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Vrai si la valeur respecte le minimum et le maximum demandés (bornes comprises).
+        /// Une valeur inconnue ne respecte aucune borne.
+        /// </summary>
+        private static bool DansLesBornes(object valeur, decimal? min, decimal? max)
+        {
+            if (min == null && max == null)
+            {
+                return true;
+            }
+            if (valeur == null || valeur == DBNull.Value)
+            {
+                return false;
+            }
+            decimal nombre;
+            if (!decimal.TryParse(Convert.ToString(valeur, System.Globalization.CultureInfo.InvariantCulture), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out nombre))
+            {
+                return false;
+            }
+            return (min == null || nombre >= min) && (max == null || nombre <= max);
         }
 
         /****************************************************************************************************************************************************************************/
@@ -1266,6 +1194,8 @@ namespace Form_Sae24_Stargate
         /// <param name="e"></param>
         private void btnSupprimerFiltrePlanete_Click(object sender, EventArgs e)
         {
+            //On vide tout d'abord, puis on réaffiche une seule fois
+            majFiltresSuspendue = true;
             txtFiltreNomPlanete.Text = string.Empty;
             txtGraviteMin.Text = string.Empty;
             txtGraviteMax.Text = string.Empty;
@@ -1274,176 +1204,97 @@ namespace Form_Sae24_Stargate
             ckbADataBaz.Checked = false;
             ckbDataBazInconnu.Checked = false;
             ckbPDataBaz.Checked = false;
+            majFiltresSuspendue = false;
 
             //Affichage de la totalité des planètes
-            flpAffichageTrombinoPlanetes(MesDatas.DsGlobal.Tables["dtPlanetes"]);
+            AppliquerFiltresPlanetes();
         }
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Autorise uniquement la saisie de chiffres et de '-' dans la textBox txtTempMin
+        /// Autorise uniquement la saisie d'un nombre entier, avec un seul '-' au début, dans la textBox txtTempMin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void txtTempMin_KeyPress(object sender, KeyPressEventArgs e)
         {
-
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Enter && e.KeyChar != (char)Keys.Back && e.KeyChar != '-')
-            {
-                e.Handled = true;
-            }
-
-            if (txtTempMin.SelectionStart != 0 && e.KeyChar == '-')
-            {
-                e.Handled = true;
-            }
+            e.Handled = !ToucheEntierAutorisee(txtTempMin, e.KeyChar);
         }
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Autorise uniquement la saisie de chiffres et de '-' dans la textBox txtTempMax
+        /// Autorise uniquement la saisie d'un nombre entier, avec un seul '-' au début, dans la textBox txtTempMax
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         private void txtTempMax_KeyPress(object sender, KeyPressEventArgs e)
         {
-
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Enter && e.KeyChar != (char)Keys.Back && e.KeyChar != '-')
-            {
-                e.Handled = true;
-            }
-
-            if (txtTempMax.SelectionStart != 0 && e.KeyChar == '-')
-            {
-                e.Handled = true;
-            }
+            e.Handled = !ToucheEntierAutorisee(txtTempMax, e.KeyChar);
         }
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Autorise uniquement la saisie de chiffres et de points dans la textBox txtGraviteMin
+        /// Autorise uniquement la saisie d'un nombre à virgule dans la textBox txtGraviteMin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void txtGraviteMin_KeyPress(object sender, KeyPressEventArgs e)
         {
-
-            bool contientVirgule = false;
-
-            //Si le caractère entré n'est chiffre ou caractère autorisé, interdit d'écrire
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Enter && e.KeyChar != (char)Keys.Back && e.KeyChar != ',' && e.KeyChar != '.')
-            {
-                e.Handled = true;
-            }
-
-            //S'il y a une virgule bool à true
-            contientVirgule = txtGraviteMin.Text.Contains('.');
-
-            //Si le caractère est une virgule
-            if (e.KeyChar == '.')
-            {
-                //déjà une virgule
-                if (contientVirgule)
-                {
-                    //Pas le droit d'écrire
-                    e.Handled = true;
-                }
-                if (txtGraviteMin.SelectionStart == 0)
-                {
-                    txtGraviteMin.Text = "0";
-                    contientVirgule = true;
-                    txtGraviteMin.SelectionStart += 2;
-                }
-
-            }
-
-            //Si le caractère est un point
-            if (e.KeyChar == ',')
-            {
-                //Remplacer point par virgule
-                e.KeyChar = '.';
-
-                //déjà une virgule
-                if (contientVirgule)
-                {
-                    //Pas le droit d'écrire
-                    e.Handled = true;
-                }
-                else
-                {
-                    if (txtGraviteMin.SelectionStart == 0)
-                    {
-                        txtGraviteMin.Text = "0";
-                        contientVirgule = true;
-                        txtGraviteMin.SelectionStart += 2;
-                    }
-                }
-
-            }
+            ToucheDecimalAutorisee(txtGraviteMin, e);
         }
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Autorise uniquement la saisie de chiffres et de points dans la textBox txtGraviteMax
+        /// Autorise uniquement la saisie d'un nombre à virgule dans la textBox txtGraviteMax
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void txtGraviteMax_KeyPress(object sender, KeyPressEventArgs e)
         {
+            ToucheDecimalAutorisee(txtGraviteMax, e);
+        }
 
-            bool contientVirgule = false;
+        /****************************************************************************************************************************************************************************/
+        /// <summary>
+        /// Texte qu'aurait la textBox si la touche tapée remplaçait la sélection actuelle
+        /// </summary>
+        private static string TexteSansSelection(System.Windows.Forms.TextBox txt)
+        {
+            return txt.Text.Remove(txt.SelectionStart, txt.SelectionLength);
+        }
 
-            //Si le caractère entré n'est chiffre ou caractère autorisé, interdit d'écrire
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Enter && e.KeyChar != (char)Keys.Back && e.KeyChar != ',' && e.KeyChar != '.')
+        /// <summary>
+        /// Chiffres, effacement, et un seul '-' placé au tout début
+        /// </summary>
+        private static bool ToucheEntierAutorisee(System.Windows.Forms.TextBox txt, char touche)
+        {
+            if (char.IsDigit(touche) || char.IsControl(touche))
             {
-                e.Handled = true;
+                return true;
             }
-
-            //S'il y a une virgule bool à true
-            contientVirgule = txtGraviteMax.Text.Contains('.');
-
-            //Si le caractère est une virgule
-            if (e.KeyChar == '.')
+            if (touche == '-')
             {
-                //déjà une virgule
-                if (contientVirgule)
-                {
-                    //Pas le droit d'écrire
-                    e.Handled = true;
-                }
-                if (txtGraviteMax.SelectionStart == 0)
-                {
-                    txtGraviteMax.Text = "0";
-                    contientVirgule = true;
-                    txtGraviteMax.SelectionStart += 2;
-                }
-
+                return txt.SelectionStart == 0 && !TexteSansSelection(txt).Contains('-');
             }
+            return false;
+        }
 
-            //Si le caractère est un point
-            if (e.KeyChar == ',')
+        /// <summary>
+        /// Chiffres, effacement, et un seul séparateur décimal (la virgule est changée en point)
+        /// </summary>
+        private static void ToucheDecimalAutorisee(System.Windows.Forms.TextBox txt, KeyPressEventArgs e)
+        {
+            if (char.IsDigit(e.KeyChar) || char.IsControl(e.KeyChar))
             {
-                //Remplacer point par virgule
+                return;
+            }
+            if (e.KeyChar == '.' || e.KeyChar == ',')
+            {
                 e.KeyChar = '.';
-
-                //déjà une virgule
-                if (contientVirgule)
-                {
-                    //Pas le droit d'écrire
-                    e.Handled = true;
-                }
-                else
-                {
-                    if (txtGraviteMax.SelectionStart == 0)
-                    {
-                        txtGraviteMax.Text = "0";
-                        contientVirgule = true;
-                        txtGraviteMax.SelectionStart += 2;
-                    }
-                }
-
+                e.Handled = TexteSansSelection(txt).Contains('.');
+                return;
             }
+            e.Handled = true;
         }
         //===============================================================================================================================================================================
         //      VOLET STATISTIQUES
