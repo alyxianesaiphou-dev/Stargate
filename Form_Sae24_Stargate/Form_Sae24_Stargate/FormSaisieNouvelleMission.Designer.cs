@@ -113,6 +113,7 @@
             this.listViewCapture.Size = new System.Drawing.Size(617, 115);
             this.listViewCapture.TabIndex = 11;
             this.listViewCapture.UseCompatibleStateImageBehavior = false;
+            this.listViewCapture.View = System.Windows.Forms.View.List;
             this.listViewCapture.Visible = false;
             // 
             // lblObjectifCapture
@@ -135,6 +136,7 @@
             this.listViewMembre.Size = new System.Drawing.Size(619, 121);
             this.listViewMembre.TabIndex = 9;
             this.listViewMembre.UseCompatibleStateImageBehavior = false;
+            this.listViewMembre.View = System.Windows.Forms.View.List;
             this.listViewMembre.Visible = false;
             // 
             // lbbMembreMission
