@@ -21,9 +21,9 @@ namespace Form_Sae24_Stargate
         //épaisseur du cadre rose de sélection
         private const int bordure = 5;
 
-        private static readonly Color couleurAllie = Color.FromArgb(40, 150, 85);
-        private static readonly Color couleurEnnemi = Color.FromArgb(200, 45, 65);
-        private static readonly Color couleurNeutre = Color.FromArgb(105, 105, 130);
+        private static readonly Color couleurAllie = Color.FromArgb(90, 225, 130);
+        private static readonly Color couleurEnnemi = Color.FromArgb(255, 95, 105);
+        private static readonly Color couleurNeutre = Color.Silver;
 
         private readonly Panel fond;
         private readonly Label lblCoche;
@@ -84,14 +84,14 @@ namespace Form_Sae24_Stargate
             lblCouleur.BackColor = Color.Transparent;
             lblCouleur.Text = "Couleur : " + couleur;
 
-            //statut : pastille de couleur (le degré n'est affiché que dans la fiche détaillée)
+            //statut écrit en couleur (le degré n'est affiché que dans la fiche détaillée)
             Label lblStatut = new Label();
             lblStatut.AutoSize = false;
             lblStatut.Size = new Size(100, 26);
             lblStatut.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatut.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblStatut.ForeColor = Color.White;
-            lblStatut.BackColor = statut == "Allié" ? couleurAllie : (statut == "Ennemi" ? couleurEnnemi : couleurNeutre);
+            lblStatut.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblStatut.ForeColor = statut == "Allié" ? couleurAllie : (statut == "Ennemi" ? couleurEnnemi : couleurNeutre);
+            lblStatut.BackColor = Color.Transparent;
             lblStatut.Text = statut;
 
             lblStatut.Location = new Point((largeurFond - lblStatut.Width) / 2, 216);
