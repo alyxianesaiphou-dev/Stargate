@@ -151,15 +151,21 @@ namespace Form_Sae24_Stargate
             int marge = Math.Max(0, (largeurUtile - nbColonnes * largeurColonne) / 2);
             panneau.Padding = new Padding(marge, (int)Math.Round(6 * facteur), 0, (int)Math.Round(6 * facteur));
 
-            //on recentre quand le panneau change de taille (fenêtre agrandie)
-            if (!panneauxCentres.Contains(panneau))
+            //on recentre quand le panneau change de taille (fenêtre agrandie), avec les dernières cartes affichées
+            bool dejaSuivi = panneauxCentres.ContainsKey(panneau);
+            panneauxCentres[panneau] = new Size(largeurCarte, margeCarte);
+            if (!dejaSuivi)
             {
-                panneauxCentres.Add(panneau);
-                panneau.Resize += delegate { CentrerColonnes(panneau, largeurCarte, margeCarte); };
+                panneau.Resize += delegate
+                {
+                    Size carte = panneauxCentres[panneau];
+                    CentrerColonnes(panneau, carte.Width, carte.Height);
+                };
                 panneau.Disposed += delegate { panneauxCentres.Remove(panneau); };
             }
         }
 
-        private static readonly System.Collections.Generic.HashSet<FlowLayoutPanel> panneauxCentres = new System.Collections.Generic.HashSet<FlowLayoutPanel>();
+        //taille de carte (largeur, marge) utilisée pour centrer chaque panneau
+        private static readonly System.Collections.Generic.Dictionary<FlowLayoutPanel, Size> panneauxCentres = new System.Collections.Generic.Dictionary<FlowLayoutPanel, Size>();
     }
 }

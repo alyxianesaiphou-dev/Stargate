@@ -177,18 +177,6 @@ namespace Form_Sae24_Stargate
             controle.FontChanged += PoliceChangee;
             controle.ControlAdded += EnfantAjoute;
 
-            DataGridView tableau = controle as DataGridView;
-            if (tableau != null)
-            {
-                tableau.ColumnAdded += delegate (object sender, DataGridViewColumnEventArgs e)
-                {
-                    if (!enCours)
-                    {
-                        e.Column.Width = (int)Math.Round(e.Column.Width * etat.FacteurColonnes);
-                    }
-                };
-            }
-
             foreach (Control enfant in controle.Controls)
             {
                 Suivre(enfant);
@@ -321,6 +309,28 @@ namespace Form_Sae24_Stargate
             controle.SuspendLayout();
             try
             {
+                MettreAEchelleSansEnfants(controle, etat);
+
+                if (avecEnfants)
+                {
+                    foreach (Control enfant in controle.Controls)
+                    {
+                        MettreAEchelle(enfant, true);
+                    }
+                }
+            }
+            finally
+            {
+                controle.ResumeLayout(true);
+                enCours = dejaEnCours;
+            }
+        }
+
+        //un souci de mise à l'échelle sur un contrôle ne doit jamais faire planter l'application
+        private void MettreAEchelleSansEnfants(Control controle, Etat etat)
+        {
+            try
+            {
                 //texte ; un panneau n'affiche pas de texte lui-même : il garde sa police d'origine, pour que
                 //les contrôles qu'on y ajoute plus tard ne soient pas agrandis deux fois
                 if (etat.Police != null)
@@ -391,19 +401,10 @@ namespace Form_Sae24_Stargate
                 }
 
                 MettreColonnesAEchelle(controle, etat);
-
-                if (avecEnfants)
-                {
-                    foreach (Control enfant in controle.Controls)
-                    {
-                        MettreAEchelle(enfant, true);
-                    }
-                }
             }
-            finally
+            catch (Exception ex)
             {
-                controle.ResumeLayout(true);
-                enCours = dejaEnCours;
+                System.Diagnostics.Debug.WriteLine("AdaptationEcran : " + controle.Name + " : " + ex.Message);
             }
         }
 
@@ -421,6 +422,11 @@ namespace Form_Sae24_Stargate
             {
                 foreach (DataGridViewColumn colonne in tableau.Columns)
                 {
+                    //une colonne qui se dimensionne toute seule (remplissage, contenu) ne se touche pas
+                    if (colonne.InheritedAutoSizeMode != DataGridViewAutoSizeColumnMode.None)
+                    {
+                        continue;
+                    }
                     colonne.Width = Math.Max(colonne.MinimumWidth, (int)Math.Round(colonne.Width * rapport));
                 }
                 tableau.RowTemplate.Height = Math.Max(3, (int)Math.Round(tableau.RowTemplate.Height * rapport));
