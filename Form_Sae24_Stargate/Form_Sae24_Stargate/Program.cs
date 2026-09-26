@@ -16,6 +16,8 @@ namespace Form_Sae24_Stargate
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            //la molette fait défiler la liste sous la souris
+            MoletteDefilement.Activer();
             Application.Run(new FormAccueil());
         }
     }
