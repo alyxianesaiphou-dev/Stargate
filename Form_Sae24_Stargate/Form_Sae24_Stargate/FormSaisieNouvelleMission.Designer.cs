@@ -106,6 +106,7 @@
             // listViewCapture
             // 
             this.listViewCapture.HideSelection = false;
+            this.listViewCapture.ForeColor = System.Drawing.Color.Black;
             this.listViewCapture.Location = new System.Drawing.Point(29, 789);
             this.listViewCapture.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listViewCapture.Name = "listViewCapture";
@@ -127,6 +128,7 @@
             // listViewMembre
             // 
             this.listViewMembre.HideSelection = false;
+            this.listViewMembre.ForeColor = System.Drawing.Color.Black;
             this.listViewMembre.Location = new System.Drawing.Point(27, 606);
             this.listViewMembre.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listViewMembre.Name = "listViewMembre";
