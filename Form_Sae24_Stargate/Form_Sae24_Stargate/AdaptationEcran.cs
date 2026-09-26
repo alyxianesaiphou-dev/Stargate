@@ -112,6 +112,19 @@ namespace Form_Sae24_Stargate
             return controle.Size;
         }
 
+        /// <summary>
+        /// Position et taille d'origine d'un contrôle (celles du concepteur), avant mise à l'échelle
+        /// </summary>
+        public static Rectangle BornesDeBase(Control controle)
+        {
+            Etat etat;
+            if (etats.TryGetValue(controle, out etat))
+            {
+                return etat.Bornes;
+            }
+            return controle.Bounds;
+        }
+
         //une fenêtre en plein écran a été réglée pour remplir l'écran de référence ;
         //une autre fenêtre est agrandie comme l'écran, sans jamais en dépasser
         private void FenetreChargee(object sender, EventArgs e)

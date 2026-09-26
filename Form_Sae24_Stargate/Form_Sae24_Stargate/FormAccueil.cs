@@ -101,6 +101,21 @@ namespace Form_Sae24_Stargate
         /// Colore le bouton sélectionné sur le tableau de bord
         /// </summary>
         /// <param name="btnSelect"></param>
+        private void PlacerTrombino(GroupBox filtres)
+        {
+            //Le trombinoscope (aliens ou planètes) occupe la même zone que les statistiques :
+            //les filtres en haut, les cartes en dessous (on fait défiler à la molette)
+            System.Drawing.Rectangle zone = AdaptationEcran.BornesDeBase(tabAffichage);
+            System.Drawing.Rectangle zoneFiltres = AdaptationEcran.BornesDeBase(filtres);
+
+            filtres.Location = new System.Drawing.Point(zone.Left, zone.Top);
+            filtres.Size = new System.Drawing.Size(zone.Width, zoneFiltres.Height);
+
+            int haut = zone.Top + zoneFiltres.Height + 8;
+            flpAffichage.Location = new System.Drawing.Point(zone.Left, haut);
+            flpAffichage.Size = new System.Drawing.Size(zone.Width, zone.Bottom - haut);
+        }
+
         private void selectionnerBouton(UCBoutonImage btnSelect)
         {
             //S'il y a un bouton sélectionné, on remet sa couleur
@@ -510,14 +525,12 @@ namespace Form_Sae24_Stargate
             ComboVide.AjouterChoixVide(cboFiltrePlanete);
 
             //Paramètres du flpAffichage comprenant les usercontrol
-            this.grpFiltre.Location = new System.Drawing.Point(360, 29);
             flpAffichage.Visible = true;
             flpAffichage.AutoScroll = true;
             flpAffichage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            flpAffichage.Location = new System.Drawing.Point(360, 210);
             flpAffichage.Name = "flpAffichage";
-            flpAffichage.Size = new System.Drawing.Size(1120, 590);
             flpAffichage.TabIndex = 11;
+            PlacerTrombino(grpFiltre);
 
             //Ajout du flpAffichage
             this.Controls.Add(flpAffichage);
@@ -917,14 +930,12 @@ namespace Form_Sae24_Stargate
             txtGraviteMax.ShortcutsEnabled = false;
 
             //Paramètres du flpAffichage comprenant les usercontrol
-            this.grpFiltrePlanete.Location = new System.Drawing.Point(360, 29);
             flpAffichage.Visible = true;
             flpAffichage.AutoScroll = true;
             flpAffichage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            flpAffichage.Location = new System.Drawing.Point(360, 200);
             flpAffichage.Name = "flpAffichage";
-            flpAffichage.Size = new System.Drawing.Size(1053, 610);
             flpAffichage.TabIndex = 11;
+            PlacerTrombino(grpFiltrePlanete);
 
             //Ajout du flpAffichage
             this.Controls.Add(flpAffichage);

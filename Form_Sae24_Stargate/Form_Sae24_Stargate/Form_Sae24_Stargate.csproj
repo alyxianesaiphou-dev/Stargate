@@ -90,6 +90,7 @@
     </Compile>
     <Compile Include="AdaptationEcran.cs" />
     <Compile Include="ComboVide.cs" />
+    <Compile Include="MoletteDefilement.cs" />
     <Compile Include="CarteAlien.cs">
       <SubType>Component</SubType>
     </Compile>
