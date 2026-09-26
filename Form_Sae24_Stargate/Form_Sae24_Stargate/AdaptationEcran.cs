@@ -10,7 +10,7 @@ namespace Form_Sae24_Stargate
     /// Adapte une fenêtre à la taille de l'écran : positions, tailles et textes de tous les contrôles
     /// sont agrandis (ou réduits) dans la même proportion que la fenêtre, et l'espace en trop est
     /// réparti de chaque côté pour que tout reste centré.
-    /// Les fenêtres ont été dessinées pour un écran de 1920 x 1080 : sur cet écran rien ne bouge.
+    /// Les fenêtres ont été réglées pour un écran 1920 x 1080 à 125 % : sur cet écran rien ne bouge.
     ///
     /// Utilisation : AdaptationEcran.Activer(this); à la fin du constructeur de la fenêtre.
     /// Le code de la fenêtre continue à utiliser les positions et tailles d'origine (celles du concepteur) :
@@ -19,9 +19,12 @@ namespace Form_Sae24_Stargate
     /// </summary>
     public class AdaptationEcran
     {
-        //zone utile d'un écran 1920 x 1080 (barre des tâches enlevée), pour laquelle les fenêtres ont été dessinées
-        private const float largeurReference = 1920f;
-        private const float hauteurReference = 1040f;
+        //zone utile de l'écran pour lequel les fenêtres ont été réglées (barre des tâches enlevée) :
+        //un écran 1920 x 1080 avec la mise à l'échelle Windows à 125 %, que l'application voit comme 1536 x 864.
+        //(Windows rétrécit les fenêtres dessinées dans Visual Studio à 125 % ; les positions écrites dans le code
+        //ont été choisies en tenant compte de ce rétrécissement, c'est cet ensemble qu'on agrandit.)
+        private const float largeurReference = 1536f;
+        private const float hauteurReference = 824f;
 
         //état d'origine d'un contrôle, avant mise à l'échelle
         private class Etat
@@ -109,7 +112,7 @@ namespace Form_Sae24_Stargate
             return controle.Size;
         }
 
-        //une fenêtre en plein écran a été dessinée pour remplir l'écran 1920 x 1080 ;
+        //une fenêtre en plein écran a été réglée pour remplir l'écran de référence ;
         //une autre fenêtre est agrandie comme l'écran, sans jamais en dépasser
         private void FenetreChargee(object sender, EventArgs e)
         {
@@ -176,18 +179,6 @@ namespace Form_Sae24_Stargate
             controle.SizeChanged += TailleChangee;
             controle.FontChanged += PoliceChangee;
             controle.ControlAdded += EnfantAjoute;
-
-            DataGridView tableau = controle as DataGridView;
-            if (tableau != null)
-            {
-                tableau.ColumnAdded += delegate (object sender, DataGridViewColumnEventArgs e)
-                {
-                    if (!enCours)
-                    {
-                        e.Column.Width = (int)Math.Round(e.Column.Width * etat.FacteurColonnes);
-                    }
-                };
-            }
 
             foreach (Control enfant in controle.Controls)
             {
@@ -321,6 +312,28 @@ namespace Form_Sae24_Stargate
             controle.SuspendLayout();
             try
             {
+                MettreAEchelleSansEnfants(controle, etat);
+
+                if (avecEnfants)
+                {
+                    foreach (Control enfant in controle.Controls)
+                    {
+                        MettreAEchelle(enfant, true);
+                    }
+                }
+            }
+            finally
+            {
+                controle.ResumeLayout(true);
+                enCours = dejaEnCours;
+            }
+        }
+
+        //un souci de mise à l'échelle sur un contrôle ne doit jamais faire planter l'application
+        private void MettreAEchelleSansEnfants(Control controle, Etat etat)
+        {
+            try
+            {
                 //texte ; un panneau n'affiche pas de texte lui-même : il garde sa police d'origine, pour que
                 //les contrôles qu'on y ajoute plus tard ne soient pas agrandis deux fois
                 if (etat.Police != null)
@@ -391,19 +404,10 @@ namespace Form_Sae24_Stargate
                 }
 
                 MettreColonnesAEchelle(controle, etat);
-
-                if (avecEnfants)
-                {
-                    foreach (Control enfant in controle.Controls)
-                    {
-                        MettreAEchelle(enfant, true);
-                    }
-                }
             }
-            finally
+            catch (Exception ex)
             {
-                controle.ResumeLayout(true);
-                enCours = dejaEnCours;
+                System.Diagnostics.Debug.WriteLine("AdaptationEcran : " + controle.Name + " : " + ex.Message);
             }
         }
 
@@ -421,6 +425,11 @@ namespace Form_Sae24_Stargate
             {
                 foreach (DataGridViewColumn colonne in tableau.Columns)
                 {
+                    //une colonne qui se dimensionne toute seule (remplissage, contenu) ne se touche pas
+                    if (colonne.InheritedAutoSizeMode != DataGridViewAutoSizeColumnMode.None)
+                    {
+                        continue;
+                    }
                     colonne.Width = Math.Max(colonne.MinimumWidth, (int)Math.Round(colonne.Width * rapport));
                 }
                 tableau.RowTemplate.Height = Math.Max(3, (int)Math.Round(tableau.RowTemplate.Height * rapport));
