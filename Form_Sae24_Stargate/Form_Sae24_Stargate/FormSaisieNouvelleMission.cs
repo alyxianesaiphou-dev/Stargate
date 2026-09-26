@@ -18,7 +18,8 @@ namespace Form_Sae24_Stargate
         private CartePlanete planeteSelectionnee = null;
         private List<CarteMembre> membresSelectionnes = new List<CarteMembre>();
         
-        private Dictionary<CarteAlien, int> capturesSelectionnees = new Dictionary<CarteAlien, int>();
+        //objectifs de capture : nom de l'espèce -> nombre à capturer (gardés si on revient en arrière)
+        private Dictionary<string, int> capturesSelectionnees = new Dictionary<string, int>();
 
         
         private CarteAlien alienEnCoursDeSaisie = null;
@@ -26,7 +27,8 @@ namespace Form_Sae24_Stargate
         
         private Panel pnlSaisieQuantite;
         private Label lblSaisieQuantite;
-        private TextBox txtSaisieQuantite; private CarteAlien alienSelectionne = null;
+        private TextBox txtSaisieQuantite;
+        private Button btnRetirerCapture;
         public FormSaisieNouvelleMission()
         {
             InitializeComponent();
@@ -243,6 +245,7 @@ namespace Form_Sae24_Stargate
         }
         private void passserEtape5a4(object sender, EventArgs e)
         {
+            pnlSaisieQuantite.Visible = false;
 
             gpbChoixPlanete.Visible = false;
             gpbChoixChef.Visible = false;
@@ -615,6 +618,9 @@ namespace Form_Sae24_Stargate
         private void ChargerAliensPlanete(string nomPlaneteChoisie)
         {
             flpCaptures.Controls.Clear();
+            pnlSaisieQuantite.Visible = false;
+            //espèces de cette planète, pour oublier les captures prévues sur une autre planète
+            List<string> especesPresentes = new List<string>();
             flpCaptures.BackColor = CarteMembre.CouleurTrombinoscope;
             CarteMembre.CentrerColonnes(flpCaptures, CarteAlien.Largeur, CarteAlien.Marge);
 
@@ -652,7 +658,19 @@ namespace Form_Sae24_Stargate
                         statut = "Ennemi";
                     }
 
-                    CarteAlien carteAlien = new CarteAlien(nomAlien, couleur, statut, "Présence : " + lecteur["pourcentage"].ToString() + "%");
+                    string presence = "Présence : " + lecteur["pourcentage"].ToString() + "%";
+                    CarteAlien carteAlien = new CarteAlien(nomAlien, couleur, statut, presence);
+                    //texte d'origine, remis quand la capture est retirée
+                    carteAlien.Tag = presence;
+                    especesPresentes.Add(nomAlien);
+
+                    //capture déjà choisie avant de revenir à cette étape
+                    int quantiteChoisie;
+                    if (capturesSelectionnees.TryGetValue(nomAlien, out quantiteChoisie))
+                    {
+                        carteAlien.Selectionnee = true;
+                        carteAlien.Info = "À capturer : " + quantiteChoisie;
+                    }
 
                     carteAlien.Clic += ClicSurUnAlien;
 
@@ -660,6 +678,15 @@ namespace Form_Sae24_Stargate
                 }
 
                 lecteur.Close();
+
+                foreach (string nom in new List<string>(capturesSelectionnees.Keys))
+                {
+                    if (!especesPresentes.Contains(nom))
+                    {
+                        capturesSelectionnees.Remove(nom);
+                    }
+                }
+                AfficherCaptures();
 
                 if (flpCaptures.Controls.Count == 0)
                 {
@@ -682,7 +709,7 @@ namespace Form_Sae24_Stargate
         private void InitialiserPopupCapture()
         {
             pnlSaisieQuantite = new Panel();
-            pnlSaisieQuantite.Size = new Size(300, 100);
+            pnlSaisieQuantite.Size = new Size(400, 170);
             pnlSaisieQuantite.BackColor = Color.MidnightBlue;
             pnlSaisieQuantite.BorderStyle = BorderStyle.FixedSingle;
             pnlSaisieQuantite.Visible = false; 
@@ -690,23 +717,58 @@ namespace Form_Sae24_Stargate
             lblSaisieQuantite = new Label();
             lblSaisieQuantite.Text = "Combien voulez-vous en capturer ?";
             lblSaisieQuantite.ForeColor = Color.White;
-            lblSaisieQuantite.AutoSize = true;
-            lblSaisieQuantite.Location = new Point(20, 20);
+            lblSaisieQuantite.AutoSize = false;
+            lblSaisieQuantite.Location = new Point(20, 15);
+            lblSaisieQuantite.Size = new Size(360, 50);
 
             txtSaisieQuantite = new TextBox();
-            txtSaisieQuantite.Location = new Point(20, 50);
-            txtSaisieQuantite.Size = new Size(260, 26);
+            txtSaisieQuantite.Location = new Point(20, 70);
+            txtSaisieQuantite.Size = new Size(360, 26);
 
             txtSaisieQuantite.KeyDown += new KeyEventHandler(this.txtSaisieQuantite_KeyDown);
 
+            //Valider enregistre la quantité, Retirer enlève la capture déjà prévue, Annuler ferme sans rien changer
+            Button btnValiderCapture = CreerBoutonPopup("Valider", 20);
+            btnValiderCapture.Click += delegate { ValiderQuantiteCapture(); };
+
+            btnRetirerCapture = CreerBoutonPopup("Retirer", 145);
+            btnRetirerCapture.Click += delegate { RetirerCapture(); };
+
+            Button btnAnnulerCapture = CreerBoutonPopup("Annuler", 270);
+            btnAnnulerCapture.Click += delegate { pnlSaisieQuantite.Visible = false; };
+
             pnlSaisieQuantite.Controls.Add(lblSaisieQuantite);
             pnlSaisieQuantite.Controls.Add(txtSaisieQuantite);
+            pnlSaisieQuantite.Controls.Add(btnValiderCapture);
+            pnlSaisieQuantite.Controls.Add(btnRetirerCapture);
+            pnlSaisieQuantite.Controls.Add(btnAnnulerCapture);
             this.Controls.Add(pnlSaisieQuantite);
+        }
+
+        private Button CreerBoutonPopup(string texte, int x)
+        {
+            Button bouton = new Button();
+            bouton.Text = texte;
+            bouton.Location = new Point(x, 115);
+            bouton.Size = new Size(110, 36);
+            bouton.ForeColor = Color.Black;
+            bouton.BackColor = Color.WhiteSmoke;
+            bouton.UseVisualStyleBackColor = false;
+            return bouton;
         }
 
         private void ClicSurUnAlien(object sender, EventArgs e)
         {
             alienEnCoursDeSaisie = (CarteAlien)sender;
+            string nom = alienEnCoursDeSaisie.getNomAlien();
+
+            //si la capture est déjà prévue, on propose de changer la quantité ou de la retirer
+            int quantiteChoisie;
+            bool dejaChoisi = capturesSelectionnees.TryGetValue(nom, out quantiteChoisie);
+            lblSaisieQuantite.Text = dejaChoisi
+                ? "Combien de " + nom + " voulez-vous capturer ?\n(ou Retirer pour ne plus le capturer)"
+                : "Combien de " + nom + " voulez-vous capturer ?";
+            btnRetirerCapture.Enabled = dejaChoisi;
 
             //centrée dans la fenêtre (positions d'origine, AdaptationEcran les met à l'échelle)
             Size zone = AdaptationEcran.TailleDeBase(this);
@@ -716,7 +778,8 @@ namespace Form_Sae24_Stargate
             pnlSaisieQuantite.BringToFront();
             pnlSaisieQuantite.Visible = true;
 
-            txtSaisieQuantite.Clear();
+            txtSaisieQuantite.Text = dejaChoisi ? quantiteChoisie.ToString() : "";
+            txtSaisieQuantite.SelectAll();
             txtSaisieQuantite.Focus();
         }
 
@@ -725,36 +788,59 @@ namespace Form_Sae24_Stargate
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true; 
-
-                int quantite = 0;
-
-                if (int.TryParse(txtSaisieQuantite.Text, out quantite) && quantite > 0)
-                {
-                    capturesSelectionnees[alienEnCoursDeSaisie] = quantite;
-
-                    alienEnCoursDeSaisie.Selectionnee = true;
-                    alienEnCoursDeSaisie.Info = "À capturer : " + quantite;
-
-                    pnlSaisieQuantite.Visible = false;
-
-                    listViewCapture.Items.Clear();
-                    foreach (KeyValuePair<CarteAlien, int> capture in capturesSelectionnees)
-                    {
-                        listViewCapture.Items.Add(capture.Value.ToString() + " - " + capture.Key.getNomAlien());
-                    }
-
-                    listViewCapture.Visible = true;
-                    lblObjectifCapture.Visible = true;
-                }
-                else
-                {
-                    FormSucces.Afficher("Veuillez entrer un nombre valide supérieur à 0.", true);
-                }
+                ValiderQuantiteCapture();
             }
             else if (e.KeyCode == Keys.Escape)
             {
+                e.SuppressKeyPress = true;
                 pnlSaisieQuantite.Visible = false;
             }
+        }
+
+        private void ValiderQuantiteCapture()
+        {
+            int quantite = 0;
+
+            if (int.TryParse(txtSaisieQuantite.Text, out quantite) && quantite > 0)
+            {
+                capturesSelectionnees[alienEnCoursDeSaisie.getNomAlien()] = quantite;
+
+                alienEnCoursDeSaisie.Selectionnee = true;
+                alienEnCoursDeSaisie.Info = "À capturer : " + quantite;
+
+                pnlSaisieQuantite.Visible = false;
+                AfficherCaptures();
+            }
+            else
+            {
+                FormSucces.Afficher("Veuillez entrer un nombre valide supérieur à 0.", true);
+            }
+        }
+
+        private void RetirerCapture()
+        {
+            capturesSelectionnees.Remove(alienEnCoursDeSaisie.getNomAlien());
+
+            alienEnCoursDeSaisie.Selectionnee = false;
+            alienEnCoursDeSaisie.Info = (string)alienEnCoursDeSaisie.Tag;
+
+            pnlSaisieQuantite.Visible = false;
+            AfficherCaptures();
+        }
+
+        /// <summary>
+        /// Remplit le récapitulatif avec les captures prévues (caché s'il n'y en a aucune)
+        /// </summary>
+        private void AfficherCaptures()
+        {
+            listViewCapture.Items.Clear();
+            foreach (KeyValuePair<string, int> capture in capturesSelectionnees)
+            {
+                listViewCapture.Items.Add(capture.Value.ToString() + " - " + capture.Key);
+            }
+
+            listViewCapture.Visible = capturesSelectionnees.Count > 0;
+            lblObjectifCapture.Visible = capturesSelectionnees.Count > 0;
         }
 
         private void btnValiderMission_Click(object sender, EventArgs e)
@@ -854,10 +940,10 @@ namespace Form_Sae24_Stargate
                         cmdCapture.Parameters.AddWithValue("@nomAlien", "");
                         cmdCapture.Parameters.AddWithValue("@objectif", 0);
 
-                        foreach (KeyValuePair<CarteAlien, int> capture
+                        foreach (KeyValuePair<string, int> capture
                             in capturesSelectionnees)
                         {
-                            cmdCapture.Parameters["@nomAlien"].Value = capture.Key.getNomAlien();
+                            cmdCapture.Parameters["@nomAlien"].Value = capture.Key;
 
                             cmdCapture.Parameters["@objectif"].Value = capture.Value;
 
