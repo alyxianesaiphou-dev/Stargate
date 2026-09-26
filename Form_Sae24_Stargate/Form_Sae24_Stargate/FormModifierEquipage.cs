@@ -28,8 +28,16 @@ namespace Form_Sae24_Stargate
         //cartes cliquées (entourées en rose) en attente d'être ajoutées ou retirées
         private HashSet<Panel> cartesSelectionnees = new HashSet<Panel>();
 
-        private static readonly Color couleurCadre = Color.DarkSlateBlue;
-        private static readonly Color couleurSelection = Color.Pink;
+        //couleurs du trombinoscope
+        private static readonly Color couleurPanneau = Color.FromArgb(28, 24, 70);
+        private static readonly Color couleurCarte = Color.FromArgb(48, 42, 110);
+        private static readonly Color couleurCarteSurvol = Color.FromArgb(72, 64, 150);
+        private static readonly Color couleurSelection = Color.HotPink;
+
+        //taille fixe d'une carte en pixels (cadre de sélection compris)
+        private const int largeurCarte = 160;
+        private const int hauteurCarte = 212;
+        private const int margeCarte = 6;
 
         //un membre affiché dans un des deux trombinoscopes
         private class MembreListe
@@ -58,6 +66,7 @@ namespace Form_Sae24_Stargate
             this.BackColor = Color.DarkSlateBlue;
             this.ForeColor = Color.White;
             this.Font = new Font("Microsoft Sans Serif", 12F);
+            this.AutoScaleMode = AutoScaleMode.None;
 
             //grande fenêtre (3 cartes par ligne de chaque côté), sans dépasser de l'écran
             Rectangle ecran = Screen.PrimaryScreen.WorkingArea;
@@ -128,8 +137,16 @@ namespace Form_Sae24_Stargate
             panneau.Location = position;
             panneau.Size = taille;
             panneau.AutoScroll = true;
-            panneau.BackColor = Color.MidnightBlue;
-            panneau.BorderStyle = BorderStyle.FixedSingle;
+            panneau.BackColor = couleurPanneau;
+            panneau.BorderStyle = BorderStyle.None;
+
+            //centre les colonnes de cartes (en laissant la place de la barre de défilement)
+            int largeurUtile = taille.Width - SystemInformation.VerticalScrollBarWidth - 4;
+            int largeurColonne = largeurCarte + 2 * margeCarte;
+            int nbColonnes = Math.Max(1, largeurUtile / largeurColonne);
+            int marge = (largeurUtile - nbColonnes * largeurColonne) / 2;
+            panneau.Padding = new Padding(Math.Max(0, marge), 6, 0, 6);
+
             return panneau;
         }
 
@@ -266,27 +283,68 @@ namespace Form_Sae24_Stargate
         }
 
         /// <summary>
-        /// Carte du trombinoscope (photo + nom) dans un cadre qui devient rose quand elle est sélectionnée.
-        /// Un double-clic sur la photo ouvre toujours la fiche du membre.
+        /// Carte du trombinoscope : photo centrée et nom en dessous, de taille fixe.
+        /// Un clic la sélectionne (cadre rose), un double-clic ouvre la fiche du membre.
         /// </summary>
         private Panel CreerCarte(MembreListe membre)
         {
-            UserControlCarteMembre carte = new UserControlCarteMembre();
-            carte.RemplirInfos(membre.Matricule, membre.EstChef ? membre.Nom + " (Chef)" : membre.Nom);
-            carte.Margin = new Padding(0);
-
-            //le cadre prend la taille de la carte, avec 5 pixels de bordure pour la couleur de sélection
+            //cadre extérieur : sa couleur sert de bordure de sélection
             Panel cadre = new Panel();
-            cadre.AutoSize = true;
-            cadre.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            cadre.Padding = new Padding(5);
-            cadre.BackColor = couleurCadre;
-            cadre.Margin = new Padding(3);
+            cadre.Size = new Size(largeurCarte, hauteurCarte);
+            cadre.Margin = new Padding(margeCarte);
+            cadre.Padding = new Padding(3);
+            cadre.BackColor = couleurCarte;
             cadre.Tag = membre;
-            cadre.Controls.Add(carte);
 
-            carte.Location = new Point(5, 5);
-            carte.afficheur = delegate { ClicSurUneCarte(cadre); };
+            Panel fond = new Panel();
+            fond.Dock = DockStyle.Fill;
+            fond.BackColor = couleurCarte;
+
+            PictureBox photo = new PictureBox();
+            photo.Size = new Size(130, 130);
+            photo.Location = new Point((largeurCarte - 6 - photo.Width) / 2, 10);
+            photo.SizeMode = PictureBoxSizeMode.Zoom;
+            photo.BackColor = Color.Transparent;
+
+            string cheminImage = System.IO.Path.Combine(Application.StartupPath, "Images", "ImageMetier", membre.Matricule + ".png");
+            if (System.IO.File.Exists(cheminImage))
+            {
+                photo.Image = Image.FromFile(cheminImage);
+            }
+
+            Label lblNom = new Label();
+            lblNom.AutoSize = false;
+            lblNom.Location = new Point(4, 146);
+            lblNom.Size = new Size(largeurCarte - 14, 56);
+            lblNom.TextAlign = ContentAlignment.TopCenter;
+            lblNom.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblNom.ForeColor = Color.White;
+            lblNom.BackColor = Color.Transparent;
+            lblNom.Text = membre.Nom;
+
+            if (membre.EstChef)
+            {
+                lblNom.Text += "\n★ Chef de mission";
+                lblNom.ForeColor = Color.Gold;
+            }
+
+            fond.Controls.Add(photo);
+            fond.Controls.Add(lblNom);
+            cadre.Controls.Add(fond);
+
+            //clic, double-clic et survol sur toute la carte
+            foreach (Control zone in new Control[] { fond, photo, lblNom })
+            {
+                zone.Cursor = Cursors.Hand;
+                zone.Click += delegate { ClicSurUneCarte(cadre); };
+                zone.DoubleClick += delegate
+                {
+                    FormDetailsMembre fenetreDetails = new FormDetailsMembre(membre.Matricule);
+                    fenetreDetails.ShowDialog(this);
+                };
+                zone.MouseEnter += delegate { fond.BackColor = couleurCarteSurvol; };
+                zone.MouseLeave += delegate { fond.BackColor = couleurCarte; };
+            }
 
             return cadre;
         }
@@ -296,7 +354,7 @@ namespace Form_Sae24_Stargate
             if (cartesSelectionnees.Contains(cadre))
             {
                 cartesSelectionnees.Remove(cadre);
-                cadre.BackColor = couleurCadre;
+                cadre.BackColor = couleurCarte;
             }
             else
             {
@@ -355,7 +413,7 @@ namespace Form_Sae24_Stargate
             {
                 depart.Controls.Remove(cadre);
                 arrivee.Controls.Add(cadre);
-                cadre.BackColor = couleurCadre;
+                cadre.BackColor = couleurCarte;
                 cartesSelectionnees.Remove(cadre);
             }
 
