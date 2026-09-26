@@ -59,8 +59,11 @@ namespace Form_Sae24_Stargate
 
                 readerType.Close();
 
-                //espece
-                SQLiteCommand cmdEsp = new SQLiteCommand("SELECT * FROM Allie", maConnexion);
+                //espece ennemie (captures)
+                SQLiteCommand cmdEsp = new SQLiteCommand(
+                    @"SELECT Ennemi.idEspece, Espece.nom
+                      FROM Ennemi JOIN Espece ON Espece.id = Ennemi.idEspece
+                      ORDER BY Espece.nom", maConnexion);
                 SQLiteDataReader readerEsp = cmdEsp.ExecuteReader();
 
                 DataTable dtEsp = new DataTable();
@@ -72,6 +75,23 @@ namespace Form_Sae24_Stargate
                 cmbEspece.SelectedIndex = -1;
 
                 readerEsp.Close();
+
+                //espece alliee (achat de DataBaz)
+                SQLiteCommand cmdAllie = new SQLiteCommand(
+                    @"SELECT Allie.idEspece, Espece.nom
+                      FROM Allie JOIN Espece ON Espece.id = Allie.idEspece
+                      ORDER BY Espece.nom", maConnexion);
+                SQLiteDataReader readerAllie = cmdAllie.ExecuteReader();
+
+                DataTable dtAllie = new DataTable();
+                dtAllie.Load(readerAllie);
+
+                cmbEspeceAlliee.DataSource = dtAllie;
+                cmbEspeceAlliee.DisplayMember = "nom";
+                cmbEspeceAlliee.ValueMember = "idEspece";
+                cmbEspeceAlliee.SelectedIndex = -1;
+
+                readerAllie.Close();
             }
             catch (Exception ex)
             {
@@ -86,111 +106,144 @@ namespace Form_Sae24_Stargate
             {
                 SQLiteConnection maConnexion = Connexion.Connec;
 
-                double sommePayee = Convert.ToDouble(txtSomme.Text);
-
                 if (cmbInformateur.SelectedValue == null)
                 {
                     FormSucces.Afficher("Veuillez sélectionner un informateur.", true);
                     return;
                 }
 
-                if (!string.IsNullOrWhiteSpace(txtSomme.Text))
-                {
-                    sommePayee = Convert.ToDouble(txtSomme.Text);
-                    
-                }
-                else
+                double sommePayee;
+                if (string.IsNullOrWhiteSpace(txtSomme.Text))
                 {
                     FormSucces.Afficher("Veuillez écrire une somme.", true);
                     return;
                 }
+                if (!double.TryParse(txtSomme.Text, out sommePayee) || sommePayee < 0)
+                {
+                    FormSucces.Afficher("Veuillez écrire une somme valide.", true);
+                    return;
+                }
 
-                double budgetRestant = CalculerBudgetRestant();
+                string dateContact = dtpDateContact.Value.ToString("yyyy-MM-dd");
+                string codeInformateur = cmbInformateur.SelectedValue.ToString();
 
-                if(sommePayee > budgetRestant)
+                //un seul contact par jour et par mission (clé de la table Contact) :
+                //s'il existe déjà, on le met à jour au lieu d'en créer un nouveau
+                string reqExiste =
+                    @"SELECT sommeVersee
+                    FROM Contact
+                    WHERE nomPlanete = @planete
+                    AND numeroMission = @mission
+                    AND date(dateC) = @date";
+
+                SQLiteCommand cmdExiste = new SQLiteCommand(reqExiste, maConnexion);
+
+                cmdExiste.Parameters.AddWithValue("@planete", planeteEnCours);
+                cmdExiste.Parameters.AddWithValue("@mission", numeroEnCours);
+                cmdExiste.Parameters.AddWithValue("@date", dateContact);
+
+                object ancienneValeur = cmdExiste.ExecuteScalar();
+                bool contactExiste = ancienneValeur != null;
+                double ancienneSomme = (ancienneValeur == null || ancienneValeur == DBNull.Value) ? 0 : Convert.ToDouble(ancienneValeur);
+
+                //la somme déjà versée pour ce contact est rendue au budget avant de vérifier
+                double budgetRestant = CalculerBudgetRestant() + ancienneSomme;
+
+                if (sommePayee > budgetRestant)
                 {
                     FormSucces.Afficher("Fonds insuffisants ! Il ne reste que " + budgetRestant + " €.", true);
                     return;
                 }
 
-                //verifie le doublon
-                string reqVerif =
-                    @"SELECT COUNT(*)
-                    FROM Contact
-                    WHERE nomPlanete = @planete
-                    AND numeroMission = @mission
-                    AND nomCodeInformateur = @code
-                    AND dateC = @date";
+                SQLiteTransaction maTransaction = maConnexion.BeginTransaction();
 
-                SQLiteCommand cmdVerif = new SQLiteCommand(reqVerif, Connexion.Connec);
-
-                cmdVerif.Parameters.AddWithValue("@planete", planeteEnCours);
-                cmdVerif.Parameters.AddWithValue("@mission", numeroEnCours);
-                cmdVerif.Parameters.AddWithValue("@code", cmbInformateur.SelectedValue.ToString());
-                cmdVerif.Parameters.AddWithValue("@date", dtpDateContact.Value.ToString("yyyy-MM-dd"));
-
-                int dejaContacte = Convert.ToInt32(cmdVerif.ExecuteScalar());
-
-                if (dejaContacte > 0)
+                try
                 {
-                    FormSucces.Afficher("Erreur : Cet informateur a déjà été contacté aujourd'hui pour cette mission.",true);
-
-                    return;
-                }
-
-
-                string req = @"INSERT INTO Contact
+                    string req;
+                    if (contactExiste)
+                    {
+                        req = @"UPDATE Contact
+                            SET dateC = @date, sommeVersee = @somme, appreciation = @app, nomCodeInformateur = @code
+                            WHERE nomPlanete = @planete
+                            AND numeroMission = @mission
+                            AND date(dateC) = @date";
+                    }
+                    else
+                    {
+                        req = @"INSERT INTO Contact
                             (nomPlanete, numeroMission, dateC, sommeVersee, appreciation, nomCodeInformateur)
                             VALUES
                             (@planete, @mission, @date, @somme, @app, @code)";
-
-                SQLiteCommand cmd = new SQLiteCommand(req, maConnexion);
-
-                cmd.Parameters.AddWithValue("@planete", planeteEnCours);
-                cmd.Parameters.AddWithValue("@mission", numeroEnCours);
-                cmd.Parameters.AddWithValue("@date", dtpDateContact.Value.Date);
-                cmd.Parameters.AddWithValue("@somme", sommePayee);
-                cmd.Parameters.AddWithValue("@app", rtxtAppreciation.Text);
-                cmd.Parameters.AddWithValue("@code", cmbInformateur.SelectedValue.ToString());
-
-                cmd.ExecuteNonQuery();
-
-                // DEPENSE
-                if (sommePayee > 0)
-                {
-                    int nouvelIdDepense = 1;
-
-                    string reqMax = "SELECT MAX(id) FROM Depense WHERE nomPlanete = @p AND numeroMission = @m";
-
-                    SQLiteCommand cmdMax = new SQLiteCommand(reqMax, Connexion.Connec);
-
-                    cmdMax.Parameters.AddWithValue("@p", planeteEnCours);
-                    cmdMax.Parameters.AddWithValue("@m", numeroEnCours);
-
-                    object resultat = cmdMax.ExecuteScalar();
-
-                    if (resultat != null && resultat != DBNull.Value)
-                    {
-                        nouvelIdDepense = Convert.ToInt32(resultat) + 1;
                     }
 
-                    string reqDep =
-                        @"INSERT INTO Depense
-                        (nomPlanete, numeroMission, id, dateD, montant, motif, idTypeDepense)
-                        VALUES
-                        (@p, @m, @id, @d, @montant, @motif, 2)";
+                    SQLiteCommand cmd = new SQLiteCommand(req, maConnexion, maTransaction);
 
-                    SQLiteCommand cmdDep = new SQLiteCommand(reqDep, Connexion.Connec);
+                    cmd.Parameters.AddWithValue("@planete", planeteEnCours);
+                    cmd.Parameters.AddWithValue("@mission", numeroEnCours);
+                    cmd.Parameters.AddWithValue("@date", dateContact);
+                    cmd.Parameters.AddWithValue("@somme", sommePayee);
+                    cmd.Parameters.AddWithValue("@app", rtxtAppreciation.Text);
+                    cmd.Parameters.AddWithValue("@code", codeInformateur);
 
-                    cmdDep.Parameters.AddWithValue("@p", planeteEnCours);
-                    cmdDep.Parameters.AddWithValue("@m", numeroEnCours);
-                    cmdDep.Parameters.AddWithValue("@id", nouvelIdDepense);
-                    cmdDep.Parameters.AddWithValue("@d", dtpDateContact.Value.ToString("yyyy-MM-dd"));
-                    cmdDep.Parameters.AddWithValue("@montant", sommePayee);
-                    cmdDep.Parameters.AddWithValue("@motif", "Paiement informateur");
+                    cmd.ExecuteNonQuery();
 
-                    cmdDep.ExecuteNonQuery();
+                    // DEPENSE liée au paiement de l'informateur (type 2)
+                    string reqDepExiste =
+                        @"SELECT rowid FROM Depense
+                        WHERE nomPlanete = @p AND numeroMission = @m
+                        AND idTypeDepense = 2 AND date(dateD) = @d
+                        LIMIT 1";
+
+                    SQLiteCommand cmdDepExiste = new SQLiteCommand(reqDepExiste, maConnexion, maTransaction);
+
+                    cmdDepExiste.Parameters.AddWithValue("@p", planeteEnCours);
+                    cmdDepExiste.Parameters.AddWithValue("@m", numeroEnCours);
+                    cmdDepExiste.Parameters.AddWithValue("@d", dateContact);
+
+                    object rowidDepense = cmdDepExiste.ExecuteScalar();
+
+                    if (rowidDepense != null && rowidDepense != DBNull.Value)
+                    {
+                        string reqDep = sommePayee > 0
+                            ? "UPDATE Depense SET montant = @montant WHERE rowid = @rowid"
+                            : "DELETE FROM Depense WHERE rowid = @rowid";
+
+                        SQLiteCommand cmdDep = new SQLiteCommand(reqDep, maConnexion, maTransaction);
+
+                        cmdDep.Parameters.AddWithValue("@montant", sommePayee);
+                        cmdDep.Parameters.AddWithValue("@rowid", rowidDepense);
+
+                        cmdDep.ExecuteNonQuery();
+                    }
+                    else if (sommePayee > 0)
+                    {
+                        string reqDep =
+                            @"INSERT INTO Depense
+                            (nomPlanete, numeroMission, id, dateD, montant, motif, idTypeDepense)
+                            VALUES
+                            (@p, @m, @id, @d, @montant, @motif, 2)";
+
+                        SQLiteCommand cmdDep = new SQLiteCommand(reqDep, maConnexion, maTransaction);
+
+                        cmdDep.Parameters.AddWithValue("@p", planeteEnCours);
+                        cmdDep.Parameters.AddWithValue("@m", numeroEnCours);
+                        cmdDep.Parameters.AddWithValue("@id", ProchainIdDepense(maTransaction));
+                        cmdDep.Parameters.AddWithValue("@d", dateContact);
+                        cmdDep.Parameters.AddWithValue("@montant", sommePayee);
+                        cmdDep.Parameters.AddWithValue("@motif", "Paiement informateur");
+
+                        cmdDep.ExecuteNonQuery();
+                    }
+
+                    maTransaction.Commit();
                 }
+                catch
+                {
+                    maTransaction.Rollback();
+                    throw;
+                }
+
+                MesDatas.RechargerTables("Contact", "Depense");
 
                 //barre chargement
                 FormEcranChargement ecranSombre = new FormEcranChargement();
@@ -198,12 +251,34 @@ namespace Form_Sae24_Stargate
 
                 ViderChampsContact();
 
-                FormSucces.Afficher("Contact enregistré avec succès !");
+                FormSucces.Afficher(contactExiste ? "Contact mis à jour avec succès !" : "Contact enregistré avec succès !");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Erreur : " + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Renvoie le prochain numéro de dépense libre pour la mission en cours
+        /// </summary>
+        private int ProchainIdDepense(SQLiteTransaction maTransaction)
+        {
+            string reqMax = "SELECT MAX(id) FROM Depense WHERE nomPlanete = @p AND numeroMission = @m";
+
+            SQLiteCommand cmdMax = new SQLiteCommand(reqMax, Connexion.Connec, maTransaction);
+
+            cmdMax.Parameters.AddWithValue("@p", planeteEnCours);
+            cmdMax.Parameters.AddWithValue("@m", numeroEnCours);
+
+            object resultat = cmdMax.ExecuteScalar();
+
+            if (resultat != null && resultat != DBNull.Value)
+            {
+                return Convert.ToInt32(resultat) + 1;
+            }
+
+            return 1;
         }
 
 
@@ -242,69 +317,108 @@ namespace Form_Sae24_Stargate
             try
             {
                 SQLiteConnection maConnexion = Connexion.Connec;
-                double sommePayee = Convert.ToDouble(txtMontantDepense.Text);
 
                 if (cmbTypeDepense.SelectedValue == null)
                 {
                     FormSucces.Afficher("Veuillez sélectionner un type.", true);
                     return;
                 }
+
+                double sommePayee;
+                if (!double.TryParse(txtMontantDepense.Text, out sommePayee) || sommePayee <= 0)
+                {
+                    FormSucces.Afficher("Veuillez écrire un montant valide.", true);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(rtxtMotifDepense.Text))
+                {
+                    FormSucces.Afficher("Veuillez écrire un motif pour la dépense.", true);
+                    return;
+                }
+
+                bool achatDataBaz = Convert.ToInt32(cmbTypeDepense.SelectedValue) == 1;
+                int quantiteDataBaz = 0;
+
+                if (achatDataBaz)
+                {
+                    if (cmbEspeceAlliee.SelectedValue == null)
+                    {
+                        FormSucces.Afficher("Veuillez sélectionner l'espèce alliée.", true);
+                        return;
+                    }
+                    if (!int.TryParse(txtQuantite.Text, out quantiteDataBaz) || quantiteDataBaz <= 0)
+                    {
+                        FormSucces.Afficher("Veuillez écrire une quantité de DataBaz valide (nombre entier).", true);
+                        return;
+                    }
+                }
+
                 double budgetRestant = CalculerBudgetRestant();
 
-                if(sommePayee > budgetRestant)
+                if (sommePayee > budgetRestant)
                 {
                     FormSucces.Afficher("Fonds insuffisants ! Il ne reste que " + budgetRestant + " €.", true);
                     return;
                 }
 
-                if ( !string.IsNullOrWhiteSpace(rtxtMotifDepense.Text))
+                SQLiteTransaction maTransaction = maConnexion.BeginTransaction();
+
+                try
                 {
-                    FormSucces.Afficher("Veuillez écrire un motif pour la dépense");
-                    return;
+                    string req = @"INSERT INTO Depense
+                                    (nomPlanete, numeroMission, id, dateD, montant, motif, idTypeDepense)
+                                    VALUES
+                                    (@p, @m, @id, @d, @montant, @motif, @type)";
+
+                    SQLiteCommand cmd = new SQLiteCommand(req, maConnexion, maTransaction);
+
+                    cmd.Parameters.AddWithValue("@p", planeteEnCours);
+                    cmd.Parameters.AddWithValue("@m", numeroEnCours);
+                    cmd.Parameters.AddWithValue("@id", ProchainIdDepense(maTransaction));
+                    cmd.Parameters.AddWithValue("@d", dtpDateDepense.Value.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@montant", sommePayee);
+                    cmd.Parameters.AddWithValue("@motif", rtxtMotifDepense.Text);
+                    cmd.Parameters.AddWithValue("@type", cmbTypeDepense.SelectedValue);
+
+                    cmd.ExecuteNonQuery();
+
+                    // NEGOCIATION : un nouvel achat au même allié s'ajoute à la quantité déjà achetée
+                    if (achatDataBaz)
+                    {
+                        string reqNego = @"INSERT INTO Negocier
+                                            (nomPlanete, numeroMission, idEspeceAllie, qteDataBaz)
+                                            VALUES
+                                            (@p, @m, @esp, @qte)
+                                            ON CONFLICT(nomPlanete, numeroMission, idEspeceAllie)
+                                            DO UPDATE SET qteDataBaz = qteDataBaz + excluded.qteDataBaz";
+
+                        SQLiteCommand cmdNego = new SQLiteCommand(reqNego, maConnexion, maTransaction);
+
+                        cmdNego.Parameters.AddWithValue("@p", planeteEnCours);
+                        cmdNego.Parameters.AddWithValue("@m", numeroEnCours);
+                        cmdNego.Parameters.AddWithValue("@esp", cmbEspeceAlliee.SelectedValue);
+                        cmdNego.Parameters.AddWithValue("@qte", quantiteDataBaz);
+
+                        cmdNego.ExecuteNonQuery();
+                    }
+
+                    maTransaction.Commit();
+                }
+                catch
+                {
+                    maTransaction.Rollback();
+                    throw;
                 }
 
-                string req = @"INSERT INTO Depense
-                                (nomPlanete, numeroMission, dateD, montant, motif, idTypeDepense)
-                                VALUES
-                                (@p, @m, @d, @montant, @motif, @type)";
-
-                SQLiteCommand cmd = new SQLiteCommand(req, maConnexion);
-
-                cmd.Parameters.AddWithValue("@p", planeteEnCours);
-                cmd.Parameters.AddWithValue("@m", numeroEnCours);
-                cmd.Parameters.AddWithValue("@d", dtpDateDepense.Value.Date);
-                cmd.Parameters.AddWithValue("@montant",
-                    string.IsNullOrWhiteSpace(txtMontantDepense.Text) ? 0 : Convert.ToDouble(txtMontantDepense.Text));
-
-                cmd.Parameters.AddWithValue("@motif", rtxtMotifDepense.Text);
-                cmd.Parameters.AddWithValue("@type", cmbTypeDepense.SelectedValue);
-
-                cmd.ExecuteNonQuery();
-
-                // NEGOCIATION
-                if (Convert.ToInt32(cmbTypeDepense.SelectedValue) == 1)
-                {
-                    string reqNego = @"INSERT INTO Negocier
-                                        (nomPlanete, numeroMission, idEspeceAllie, qteDataBaz)
-                                        VALUES
-                                        (@p, @m, @esp, @qte)";
-
-                    SQLiteCommand cmdNego = new SQLiteCommand(reqNego, maConnexion);
-
-                    cmdNego.Parameters.AddWithValue("@p", planeteEnCours);
-                    cmdNego.Parameters.AddWithValue("@m", numeroEnCours);
-                    cmdNego.Parameters.AddWithValue("@esp", cmbEspeceAlliee.SelectedValue);
-                    cmdNego.Parameters.AddWithValue("@qte", txtQuantite.Text);
-
-                    cmdNego.ExecuteNonQuery();
-                }
+                MesDatas.RechargerTables("Depense", "Negocier");
 
                 FormEcranChargement ecranSombre = new FormEcranChargement();
                 ecranSombre.ShowDialog(this);
 
                 ViderChampsDepense();
                 
-                FormSucces.Afficher("Contact enregistré avec succès !");
+                FormSucces.Afficher("Dépense enregistrée avec succès !");
             }
             catch (Exception ex)
             {
@@ -323,6 +437,8 @@ namespace Form_Sae24_Stargate
             dtpDateDepense.Value = DateTime.Now;
             txtMontantDepense.Clear();
             rtxtMotifDepense.Clear();
+            txtQuantite.Clear();
+            cmbEspeceAlliee.SelectedIndex = -1;
         }
 
         private void btnNvEvenement_Click(object sender, EventArgs e)
@@ -337,6 +453,12 @@ namespace Form_Sae24_Stargate
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(rtxtCommentaireEvenement.Text))
+                {
+                    FormSucces.Afficher("Veuillez écrire un commentaire pour l'événement.", true);
+                    return;
+                }
+
                 SQLiteConnection maConnexion = Connexion.Connec;
                 string req = @"INSERT INTO JournalDeBord
                             (nomPlanete, numero, dateJ, commentaires)
@@ -345,12 +467,17 @@ namespace Form_Sae24_Stargate
 
                 SQLiteCommand cmd = new SQLiteCommand(req, maConnexion);
 
+                //l'heure est gardée pour pouvoir noter plusieurs événements le même jour
+                DateTime dateEvenement = dtpDateEvenement.Value.Date + DateTime.Now.TimeOfDay;
+
                 cmd.Parameters.AddWithValue("@p", planeteEnCours);
                 cmd.Parameters.AddWithValue("@m", numeroEnCours);
-                cmd.Parameters.AddWithValue("@d", dtpDateEvenement.Value.Date);
+                cmd.Parameters.AddWithValue("@d", dateEvenement.ToString("yyyy-MM-dd HH:mm:ss"));
                 cmd.Parameters.AddWithValue("@c", rtxtCommentaireEvenement.Text);
 
                 cmd.ExecuteNonQuery();
+
+                MesDatas.RechargerTables("JournalDeBord");
 
                 //barre chargement
                 FormEcranChargement ecranSombre = new FormEcranChargement();
@@ -358,7 +485,7 @@ namespace Form_Sae24_Stargate
 
                 ViderChampsEven();
 
-                FormSucces.Afficher("Contact enregistré avec succès !");
+                FormSucces.Afficher("Événement enregistré avec succès !");
             }
             catch (Exception ex)
             {
@@ -435,7 +562,9 @@ namespace Form_Sae24_Stargate
                 string req = @" INSERT INTO Capturer
                             (numeroMission, nomPlanete, idEspeceEnnemi, nombre)
                             VALUES
-                            (@m, @p, @e, @n)";
+                            (@m, @p, @e, @n)
+                            ON CONFLICT(nomPlanete, numeroMission, idEspeceEnnemi)
+                            DO UPDATE SET nombre = nombre + excluded.nombre";
 
                 SQLiteCommand cmd = new SQLiteCommand(req, maConnexion);
 
@@ -446,13 +575,15 @@ namespace Form_Sae24_Stargate
 
                 cmd.ExecuteNonQuery();
 
+                MesDatas.RechargerTables("Capturer");
+
                 //barre chargement
                 FormEcranChargement ecranSombre = new FormEcranChargement();
                 ecranSombre.ShowDialog(this);
 
                 ViderChampsCapture();
 
-                FormSucces.Afficher("Contact enregistré avec succès !");
+                FormSucces.Afficher("Capture enregistrée avec succès !");
             }
             catch (Exception ex)
             {

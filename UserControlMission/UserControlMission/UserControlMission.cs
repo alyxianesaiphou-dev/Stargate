@@ -77,10 +77,6 @@ namespace UserControlMission
                 this.afficher(sender, e);
             }
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> Alex
         public string getNumero()
         {
 
