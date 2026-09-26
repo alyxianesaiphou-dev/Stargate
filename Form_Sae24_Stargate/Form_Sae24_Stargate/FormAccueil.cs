@@ -18,11 +18,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using UserControlBoutonAvecImage;
-using UserControlExtraterrestres;
 using UserControlExtraterrestresDetail;
 using UserControlMission;
 using UserControlPlanete;
-using UserControlTrombinoPlanete;
 using static System.Net.WebRequestMethods;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -432,7 +430,7 @@ namespace Form_Sae24_Stargate
         /****************************************************************************************************************************************************************************/
 
         /// <summary>
-        /// Remplit de UCTrombinoAlien un flowLayoutPanel donné avec une table donnée
+        /// Remplit de cartes CarteAlien un flowLayoutPanel donné avec une table donnée
         /// Permet de sélectionner une table filtrée, ainsi que soit le flp du bouton découverte alien, soit celui de détail planètes
         /// </summary>
         /// <param name="table"></param>
@@ -446,12 +444,15 @@ namespace Form_Sae24_Stargate
             table.DefaultView.Sort = "nom ASC";
             table = table.DefaultView.ToTable(true);
 
+            CarteMembre.CentrerColonnes(flp, CarteAlien.Largeur, CarteAlien.Marge);
+
             foreach (DataRow dr in table.Rows)
             {
-                //Crée un objet UCTrombinoExtraterrestre avec les données de la dataTable
-                UCTrombinoExtraterrestre alien = new UCTrombinoExtraterrestre(dr[1].ToString(), dr[2].ToString(), dr[3].ToString(), dr[9].ToString());
-                //Associer le délégué au nouvel objet UCTrombinoExtraterrestre pour que le click soit fonctionnel
-                alien.afficheur = clickDetailAlien;
+                //Crée une carte avec les données de la dataTable, et les planètes habitées en bas
+                string planetes = dr["planete"].ToString() == "Inconnu" ? "Planète inconnue" : dr["planete"].ToString().Replace("/", ", ");
+                CarteAlien alien = CarteAlien.DepuisLigne(dr, planetes);
+                //Un clic sur la carte ouvre le détail de l'alien
+                alien.Clic += clickDetailAlien;
                 //Ajout au flp
                 flp.Controls.Add(alien);
             }
@@ -462,7 +463,7 @@ namespace Form_Sae24_Stargate
         /// <summary>
         /// Méthode appelée par le delegate afficheur lors de l'appui sur le bouton "découverte des aliens
         /// Affiche le trombinoscope des aliens sans filtre appliqué, ainsi que le groupBox filtres 
-        /// Les UserControl UCTrombinoExtraterrestres sont ajoutés dans le flpAffichage via la méthode flpAffichageTrombinoAlien
+        /// Les cartes CarteAlien sont ajoutées dans le flpAffichage via la méthode flpAffichageTrombinoAlien
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -603,7 +604,7 @@ namespace Form_Sae24_Stargate
         /****************************************************************************************************************************************************************************/
 
         /// <summary>
-        /// Applique les filtres sélectionnés et remplit le flpAffichage avec les UCTrombinoExtraterrestres filtrés
+        /// Applique les filtres sélectionnés et remplit le flpAffichage avec les cartes des aliens filtrés
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -794,17 +795,16 @@ namespace Form_Sae24_Stargate
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Affiche les détails de l'alien (bienveillance, arme, instrument...) dans un nouveau form après un click sur un UCTrombinoAlien
+        /// Affiche les détails de l'alien (bienveillance, arme, instrument...) dans un nouveau form après un clic sur une carte alien
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        //Clic sur un UCTrombino alien donne le détail dans un nouveau form
+        //Clic sur une carte alien donne le détail dans un nouveau form
         private void clickDetailAlien(object sender, EventArgs e)
         {
-            Control btn = (Control)sender;
-            UCTrombinoExtraterrestre alien = (UCTrombinoExtraterrestre)btn.Parent;
+            CarteAlien alien = (CarteAlien)sender;
 
-            //Créer le filtre avec le nom de l'alien du UCTrombinoExtraterrestres
+            //Créer le filtre avec le nom de l'alien de la carte
             String filtre = "nom = '" + alien.getNomAlien() + "'";
 
             //Récupérer la ligne de l'alien dans dtAlien
@@ -836,13 +836,14 @@ namespace Form_Sae24_Stargate
         //      VOLET PLANETES
         //===============================================================================================================================================================================
         /// <summary>
-        /// Remplit de UCTrombPlanete flpAffichage avec une table donnée
+        /// Remplit de cartes CartePlanete flpAffichage avec une table donnée
         /// </summary>
         /// <param name="dt"></param>
         private void flpAffichageTrombinoPlanetes(DataTable dt)
         {
             //Vide le flpAffichage
             flpAffichage.Controls.Clear();
+            CarteMembre.CentrerColonnes(flpAffichage, CartePlanete.Largeur, CartePlanete.Marge);
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -874,10 +875,10 @@ namespace Form_Sae24_Stargate
                 {
                     dataBaz = "?";
                 }
-                //Crée un objet UCTrombPlanete avec les données de la dataTable
-                UCTrombPlanete planete = new UCTrombPlanete(nomPlanete, temperature, gravite, dataBaz);
-                //Associer le délégué au nouvel objet UCTrombPlanete pour que le click soit fonctionnel
-                planete.afficheur = clickDetailPlanete;
+                //Crée une carte planète avec les données de la dataTable
+                CartePlanete planete = new CartePlanete(nomPlanete, temperature, gravite, dataBaz);
+                //Un clic sur la carte ouvre le détail de la planète
+                planete.Clic += clickDetailPlanete;
                 //Ajout au flpAffichage
                 flpAffichage.Controls.Add(planete);
             }
@@ -888,7 +889,7 @@ namespace Form_Sae24_Stargate
         /// <summary>
         /// Méthode appelée par le delegate afficheur lors de l'appui sur le bouton "découverte des planètes
         /// Affiche le trombinoscope des planètes sans filtre appliqué, ainsi que le groupBox filtres 
-        /// Les UserControl UCTrombPlanete sont ajoutés dans le flpAffichage via la méthode flpAffichageTrombinoPlanetes
+        /// Les cartes CartePlanete sont ajoutées dans le flpAffichage via la méthode flpAffichageTrombinoPlanetes
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -931,16 +932,15 @@ namespace Form_Sae24_Stargate
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Affiche les détails de la planète (missions effectuées, races présentes...) dans un nouveau form après un click sur un UCTrombPlanetes
+        /// Affiche les détails de la planète (missions effectuées, races présentes...) dans un nouveau form après un clic sur une carte planète
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void clickDetailPlanete(object sender, EventArgs e)
         {
-            Control btn = (Control)sender;
-            UCTrombPlanete planete = (UCTrombPlanete)btn.Parent;
+            CartePlanete planete = (CartePlanete)sender;
 
-            //Créer le filtre avec le nom de la planète du UCTrombPlanete
+            //Créer le filtre avec le nom de la planète de la carte
             String filtre = "nom = '" + planete.getNomPlanete() + "'";
 
             //Récupérer la ligne de la planète dans dtPlanete
@@ -993,6 +993,10 @@ namespace Form_Sae24_Stargate
             if (rowResultat.Length > 0)
             {
                 DataTable dtFiltre = rowResultat.CopyToDataTable();
+                FlowLayoutPanel flpRaces = planeteDetail.getFLPRaces;
+                CarteMembre.CentrerColonnes(flpRaces, CarteAlien.Largeur, CarteAlien.Marge);
+                //recentre si la fenêtre agrandit le panneau à l'affichage
+                flpRaces.Resize += delegate { CarteMembre.CentrerColonnes(flpRaces, CarteAlien.Largeur, CarteAlien.Marge); };
                 foreach (DataRow dr in dtFiltre.Rows)
                 {
                     string filtrePourcentage = "idEspece = '" + dr[0].ToString() + "' AND nomPlanete = '" + planeteDetail.nomPlanete + "'";
@@ -1000,10 +1004,10 @@ namespace Form_Sae24_Stargate
                     DataRow[] rowPourcentage = MesDatas.DsGlobal.Tables["Habiter"].Select(filtrePourcentage);
                     string pourcentage = "Présence : " + rowPourcentage[0][2].ToString() + "%";
 
-                    //Instancier nouvel objet UCTrombinoExtraterrestre avec le pourcentage
-                    UCTrombinoExtraterrestre alien = new UCTrombinoExtraterrestre(dr[1].ToString(), dr[2].ToString(), dr[3].ToString(), pourcentage);
-                    //Associer le délégué au nouvel objet UCTrombinoExtraterrestre pour que le click soit fonctionnel
-                    alien.afficheur = clickDetailAlien;
+                    //Carte de l'espèce avec son pourcentage de présence en bas
+                    CarteAlien alien = CarteAlien.DepuisLigne(dr, pourcentage);
+                    //Un clic sur la carte ouvre le détail de l'alien
+                    alien.Clic += clickDetailAlien;
                     //Ajout au flpRaces du UCPlaneteDétail
                     planeteDetail.getFLPRaces.Controls.Add(alien);
                 }
@@ -1032,7 +1036,7 @@ namespace Form_Sae24_Stargate
                     DataRow[] tabMembre = MesDatas.DsGlobal.Tables["Membre"].Select(filtreChefMission);
                     string nomChef = tabMembre[0][1].ToString() + " " + tabMembre[0][2].ToString();
 
-                    //Instancier nouvel objet UCTrombinoExtraterrestre
+                    //Instancier nouvel objet UCMission
                     UCMission mission = new UCMission(ligne[0].ToString(), ligne[1].ToString(), ligne[3].ToString(), ligne[4].ToString(), nomChef, ligne[8].ToString() + "€");
                     //Associer le délégué au nouvel objet mission pour que le bouton 'détail' soit fonctionnel
                     mission.afficher = clickDetailMission;
@@ -1054,7 +1058,7 @@ namespace Form_Sae24_Stargate
 
         /****************************************************************************************************************************************************************************/
         /// <summary>
-        /// Applique les filtres sélectionnés et remplit le flpAffichage avec les UCTrombPlanete filtrés
+        /// Applique les filtres sélectionnés et remplit le flpAffichage avec les cartes des planètes filtrées
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
