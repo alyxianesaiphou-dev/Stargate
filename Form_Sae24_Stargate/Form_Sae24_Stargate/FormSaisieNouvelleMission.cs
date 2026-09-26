@@ -57,6 +57,9 @@ namespace Form_Sae24_Stargate
             grbChoixCaptures.Visible = false;
 
             flpChef.Visible = false;
+
+            lblChoixChef.Text = "Choisissez d'abord les dates, puis un chef de mission.";
+            lblChoixChef.Visible = true;
         }
 
         private void passserEtape2a1(object sender, EventArgs e)
@@ -129,6 +132,30 @@ namespace Form_Sae24_Stargate
             lblObjectifDataBaz.Visible = true;
 
             ChargerCivilsDisponibles(dtpDebut.Value, dtpFin.Value);
+            AfficherMembresRestants();
+        }
+
+        /// <summary>
+        /// Indique combien de membres il reste à choisir : le nombre de participants moins 1, car le chef en fait partie
+        /// </summary>
+        private void AfficherMembresRestants()
+        {
+            int nbPlacesDispo = Math.Max(0, nbMembre - 1);
+            int restants = nbPlacesDispo - membresSelectionnes.Count;
+
+            if (nbPlacesDispo == 0)
+            {
+                lblNbMembreRestant.Text = "Le chef part seul : aucun membre à choisir. Cliquez sur Étape suivante.";
+            }
+            else if (restants > 0)
+            {
+                lblNbMembreRestant.Text = "Choisissez encore " + restants + " membre" + (restants > 1 ? "s" : "")
+                    + " (" + membresSelectionnes.Count + " sur " + nbPlacesDispo + ", le chef compte déjà comme participant)";
+            }
+            else
+            {
+                lblNbMembreRestant.Text = "Équipage complet (" + nbPlacesDispo + " membres + le chef). Cliquez sur Étape suivante.";
+            }
         }
 
         private void passserEtape4a3(object sender, EventArgs e)
@@ -236,7 +263,17 @@ namespace Form_Sae24_Stargate
 
                     planete.afficheur = ClicSurUnePlanete;
 
-                    flpChoixPlanete.Controls.Add(planete);
+                    //cadre autour de la planète : il devient rose quand elle est choisie
+                    Panel cadre = new Panel();
+                    cadre.AutoSize = true;
+                    cadre.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                    cadre.Padding = new Padding(6);
+                    cadre.Margin = new Padding(6);
+                    cadre.BackColor = Color.Transparent;
+                    planete.Location = new Point(6, 6);
+                    cadre.Controls.Add(planete);
+
+                    flpChoixPlanete.Controls.Add(cadre);
                 }
                 lecteur.Close();
             }
@@ -256,23 +293,25 @@ namespace Form_Sae24_Stargate
                 planeteChoisie = (UCTrombPlanete)btn.Parent;
             }
 
+            //tous les cadres reviennent transparents, puis celui de la planète choisie passe en rose
+            foreach (Control cadre in flpChoixPlanete.Controls)
+            {
+                cadre.BackColor = Color.Transparent;
+            }
+
             if (planeteSelectionnee == planeteChoisie)
             {
-                planeteChoisie.BackColor = Color.Transparent;
                 planeteSelectionnee = null;
+                lblPlanete.Text = "Planète : ";
                 return;
             }
 
-            foreach (Control ctrl in flpChoixPlanete.Controls)
-            {
-                if (ctrl is UCTrombPlanete)
-                {
-                    ctrl.BackColor = SystemColors.Control;
-                }
-            }
-            planeteChoisie.BackColor = Color.Pink;
+            planeteChoisie.Parent.BackColor = Color.HotPink;
 
             planeteSelectionnee = planeteChoisie;
+
+            lblPlanete.Text = "Planète : " + planeteChoisie.getNomPlanete();
+            lblPlanete.Visible = true;
         }
 
         private void ChargerMilitairesDisponibles(DateTime dateDebut, DateTime dateFin)
@@ -355,6 +394,7 @@ namespace Form_Sae24_Stargate
             {
                 membreChoisi.Selectionnee = false;
                 chefSelectionne = null;
+                lblChoixChef.Text = "Choisissez un chef de mission en cliquant sur sa photo :";
                 return;
             }
 
@@ -367,6 +407,7 @@ namespace Form_Sae24_Stargate
             membreChoisi.Selectionnee = true;
 
             chefSelectionne = membreChoisi;
+            lblChoixChef.Text = "Chef choisi : " + membreChoisi.Nom + " (cliquez sur une autre photo pour changer)";
         }
 
         private void ChargerCivilsDisponibles(DateTime dateDebut, DateTime dateFin)
@@ -497,6 +538,8 @@ namespace Form_Sae24_Stargate
             if (dtpFin.Value >= dtpDebut.Value)
             {
                 flpChef.Visible = true;
+                lblChoixChef.Text = "Choisissez un chef de mission en cliquant sur sa photo :";
+                lblChoixChef.Visible = true;
                 ChargerMilitairesDisponibles(dtpDebut.Value, dtpFin.Value);
             }
             else
@@ -525,9 +568,11 @@ namespace Form_Sae24_Stargate
                 }
                 else
                 {
-                    FormSucces.Afficher("Votre équipage est complet ! Vous ne pouvez pas sélectionner plus de " + nbPlacesDispo + " civils.", true);
+                    FormSucces.Afficher("Votre équipage est complet ! Vous ne pouvez pas sélectionner plus de " + nbPlacesDispo + " membres.", true);
                 }
             }
+
+            AfficherMembresRestants();
         }
 
         private void ChargerAliensPlanete(string nomPlaneteChoisie)

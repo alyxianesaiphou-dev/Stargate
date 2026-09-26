@@ -23,8 +23,13 @@ namespace Form_Sae24_Stargate
         private static readonly Color couleurCarte = Color.FromArgb(48, 42, 110);
         private static readonly Color couleurCarteSurvol = Color.FromArgb(72, 64, 150);
         private static readonly Color couleurSelection = Color.HotPink;
+        private static readonly Color couleurFondSelection = Color.FromArgb(120, 40, 110);
+
+        //épaisseur du cadre rose de sélection
+        private const int bordure = 5;
 
         private readonly Panel fond;
+        private readonly Label lblCoche;
         private bool selectionnee = false;
 
         public string Matricule { get; private set; }
@@ -42,7 +47,7 @@ namespace Form_Sae24_Stargate
             //le panneau extérieur sert de bordure : il devient rose quand la carte est sélectionnée
             this.Size = new Size(Largeur, Hauteur);
             this.Margin = new Padding(Marge);
-            this.Padding = new Padding(3);
+            this.Padding = new Padding(bordure);
             this.BackColor = couleurCarte;
 
             fond = new Panel();
@@ -51,7 +56,7 @@ namespace Form_Sae24_Stargate
 
             PictureBox photo = new PictureBox();
             photo.Size = new Size(130, 130);
-            photo.Location = new Point((Largeur - 6 - photo.Width) / 2, 10);
+            photo.Location = new Point((Largeur - 2 * bordure - photo.Width) / 2, 10);
             photo.SizeMode = PictureBoxSizeMode.Zoom;
             photo.BackColor = Color.Transparent;
 
@@ -63,8 +68,8 @@ namespace Form_Sae24_Stargate
 
             Label lblNom = new Label();
             lblNom.AutoSize = false;
-            lblNom.Location = new Point(4, 146);
-            lblNom.Size = new Size(Largeur - 14, 56);
+            lblNom.Location = new Point(2, 146);
+            lblNom.Size = new Size(Largeur - 2 * bordure - 4, 56);
             lblNom.TextAlign = ContentAlignment.TopCenter;
             lblNom.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             lblNom.ForeColor = Color.White;
@@ -77,12 +82,25 @@ namespace Form_Sae24_Stargate
                 lblNom.ForeColor = Color.Gold;
             }
 
+            //coche affichée en haut à droite quand la carte est sélectionnée
+            lblCoche = new Label();
+            lblCoche.AutoSize = false;
+            lblCoche.Size = new Size(30, 30);
+            lblCoche.Location = new Point(Largeur - 2 * bordure - 34, 4);
+            lblCoche.TextAlign = ContentAlignment.MiddleCenter;
+            lblCoche.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblCoche.ForeColor = Color.White;
+            lblCoche.BackColor = couleurSelection;
+            lblCoche.Text = "✔";
+            lblCoche.Visible = false;
+
+            fond.Controls.Add(lblCoche);
             fond.Controls.Add(photo);
             fond.Controls.Add(lblNom);
             this.Controls.Add(fond);
 
             //clic, double-clic et survol sur toute la carte
-            foreach (Control zone in new Control[] { fond, photo, lblNom })
+            foreach (Control zone in new Control[] { fond, photo, lblNom, lblCoche })
             {
                 zone.Cursor = Cursors.Hand;
                 zone.Click += delegate
@@ -98,7 +116,7 @@ namespace Form_Sae24_Stargate
                     fenetreDetails.ShowDialog(this.FindForm());
                 };
                 zone.MouseEnter += delegate { fond.BackColor = couleurCarteSurvol; };
-                zone.MouseLeave += delegate { fond.BackColor = couleurCarte; };
+                zone.MouseLeave += delegate { fond.BackColor = selectionnee ? couleurFondSelection : couleurCarte; };
             }
         }
 
@@ -109,6 +127,8 @@ namespace Form_Sae24_Stargate
             {
                 selectionnee = value;
                 this.BackColor = value ? couleurSelection : couleurCarte;
+                fond.BackColor = value ? couleurFondSelection : couleurCarte;
+                lblCoche.Visible = value;
             }
         }
 
