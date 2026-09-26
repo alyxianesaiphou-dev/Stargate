@@ -15,9 +15,9 @@ namespace Form_Sae24_Stargate
     public partial class FormSaisieNouvelleMission : Form
     {
         private int nbMembre = 0;
-        private UserControlCarteMembre chefSelectionne = null;
+        private CarteMembre chefSelectionne = null;
         private UCTrombPlanete planeteSelectionnee = null;
-        private List<UserControlCarteMembre> membresSelectionnes = new List<UserControlCarteMembre>();
+        private List<CarteMembre> membresSelectionnes = new List<CarteMembre>();
         
         private Dictionary<UserControlExtraterrestres.UCTrombinoExtraterrestre, int> capturesSelectionnees = new Dictionary<UserControlExtraterrestres.UCTrombinoExtraterrestre, int>();
 
@@ -71,7 +71,7 @@ namespace Form_Sae24_Stargate
             
         }
 
-        private void passserEtape2a3(UserControlCarteMembre membreChoisis)
+        private void passserEtape2a3(CarteMembre membreChoisis)
         {
 
             //numNbMembre.Maximum = 10;
@@ -83,7 +83,7 @@ namespace Form_Sae24_Stargate
             grbChoixCaptures.Visible = false;
 
 
-            lblChef.Text = "Chef de mission : " + membreChoisis.getnom();
+            lblChef.Text = "Chef de mission : " + membreChoisis.Nom;
             lblDateDebut.Text = "Départ : " + dtpDebut.Value.ToShortDateString();
             lblDateFin.Text = "Retour : " + dtpFin.Value.ToShortDateString();
 
@@ -162,11 +162,11 @@ namespace Form_Sae24_Stargate
 
             if (chefSelectionne != null)
             {
-                listViewMembre.Items.Add(chefSelectionne.getnom() + " (Chef)");
+                listViewMembre.Items.Add(chefSelectionne.Nom + " (Chef)");
             }
-            foreach (Form_Sae24_Stargate.UserControlCarteMembre civil in membresSelectionnes)
+            foreach (CarteMembre civil in membresSelectionnes)
             {
-                listViewMembre.Items.Add(civil.getnom());
+                listViewMembre.Items.Add(civil.Nom);
             }
 
             
@@ -278,10 +278,12 @@ namespace Form_Sae24_Stargate
         private void ChargerMilitairesDisponibles(DateTime dateDebut, DateTime dateFin)
         {
             flpChef.Controls.Clear();
+            chefSelectionne = null;
+            CarteMembre.CentrerColonnes(flpChef);
 
             try
             {
-                string requeteSQL = @" SELECT Membre.matricule, Membre.nom
+                string requeteSQL = @" SELECT Membre.matricule, Membre.nom, Membre.prenom
                                     FROM Membre
                                     INNER JOIN Militaire
                                     ON Membre.matricule = Militaire.matriculeMembre
@@ -305,13 +307,11 @@ namespace Form_Sae24_Stargate
                 while (lecteur.Read())
                 {
                     string matricule = lecteur["matricule"].ToString();
-                    string nom = lecteur["nom"].ToString();
+                    string nom = lecteur["nom"].ToString() + " " + lecteur["prenom"].ToString();
 
-                    UserControlCarteMembre carte = new UserControlCarteMembre();
+                    CarteMembre carte = new CarteMembre(matricule, nom, false);
 
-                    carte.RemplirInfos(matricule, nom);
-
-                    carte.afficheur = ClicSurUneMilitaire;
+                    carte.Clic += ClicSurUneMilitaire;
 
                     flpChef.Controls.Add(carte);
                 }
@@ -349,31 +349,22 @@ namespace Form_Sae24_Stargate
 
         private void ClicSurUneMilitaire(object sender, EventArgs e)
         {
-            Control declencheur = (Control)sender;
-            UserControlCarteMembre membreChoisi = declencheur as UserControlCarteMembre;
-            if (membreChoisi == null)
-            {
-                membreChoisi = (UserControlCarteMembre)declencheur.Parent;
-            }
+            CarteMembre membreChoisi = (CarteMembre)sender;
 
             if (chefSelectionne == membreChoisi)
             {
-                membreChoisi.BackColor = Color.Transparent;
+                membreChoisi.Selectionnee = false;
                 chefSelectionne = null;
                 return;
             }
 
-
-            foreach (Control ctrl in flpChef.Controls)
+            //un seul chef : on désélectionne l'ancien
+            if (chefSelectionne != null)
             {
-                if (ctrl is UserControlCarteMembre)
-                {
-                    ctrl.BackColor = SystemColors.Control; 
-                }
+                chefSelectionne.Selectionnee = false;
             }
-            
-            membreChoisi.BackColor = Color.Pink;
 
+            membreChoisi.Selectionnee = true;
 
             chefSelectionne = membreChoisi;
         }
@@ -382,10 +373,11 @@ namespace Form_Sae24_Stargate
         {
             flpMembreMission.Controls.Clear();
             membresSelectionnes.Clear();
+            CarteMembre.CentrerColonnes(flpMembreMission);
 
             try
             {
-                string requeteSQL = @" SELECT Membre.matricule, Membre.nom
+                string requeteSQL = @" SELECT Membre.matricule, Membre.nom, Membre.prenom
                                     FROM Membre
                                     WHERE Membre.matricule NOT IN
                                     (   SELECT Composer.matriculeMembre
@@ -405,7 +397,7 @@ namespace Form_Sae24_Stargate
 
                 if (chefSelectionne != null)
                 {
-                    commande.Parameters.AddWithValue("@matriculeChef", chefSelectionne.getMatricule());
+                    commande.Parameters.AddWithValue("@matriculeChef", chefSelectionne.Matricule);
                 }
 
                 commande.Parameters.AddWithValue("@dateDebut",dateDebut.ToString("yyyy-MM-dd"));
@@ -417,13 +409,11 @@ namespace Form_Sae24_Stargate
                 while (lecteur.Read())
                 {
                     string matricule = lecteur["matricule"].ToString();
-                    string nom = lecteur["nom"].ToString();
+                    string nom = lecteur["nom"].ToString() + " " + lecteur["prenom"].ToString();
 
-                    UserControlCarteMembre carte = new UserControlCarteMembre();
+                    CarteMembre carte = new CarteMembre(matricule, nom, false);
 
-                    carte.RemplirInfos(matricule, nom);
-
-                    carte.afficheur = ClicSurUnCivil;
+                    carte.Clic += ClicSurUnCivil;
 
                     flpMembreMission.Controls.Add(carte);
                 }
@@ -516,27 +506,22 @@ namespace Form_Sae24_Stargate
         }
         private void ClicSurUnCivil(object sender, EventArgs e)
         {
-            Control declencheur = (Control)sender;
-            UserControlCarteMembre membreChoisi = declencheur as UserControlCarteMembre;
+            CarteMembre membreChoisi = (CarteMembre)sender;
 
-            if (membreChoisi == null)
-            {
-                membreChoisi = (UserControlCarteMembre)declencheur.Parent;
-            }
             int nbPlacesDispo = Math.Max(0, nbMembre - 1);
 
 
             if (membresSelectionnes.Contains(membreChoisi))
             {
                 membresSelectionnes.Remove(membreChoisi);
-                membreChoisi.BackColor = Color.Transparent;
+                membreChoisi.Selectionnee = false;
             }
             else 
             {
                 if (membresSelectionnes.Count < nbPlacesDispo)
                 {
                     membresSelectionnes.Add(membreChoisi);
-                    membreChoisi.BackColor = Color.Pink; 
+                    membreChoisi.Selectionnee = true;
                 }
                 else
                 {
@@ -723,7 +708,7 @@ namespace Form_Sae24_Stargate
                     cmdMission.Parameters.AddWithValue("@nbMembreRequis", nbMembre);
                     cmdMission.Parameters.AddWithValue("@dateDepart", dtpDebut.Value.ToString("yyyy-MM-dd"));
                     cmdMission.Parameters.AddWithValue("@dateRetour", dtpFin.Value.ToString("yyyy-MM-dd"));
-                    cmdMission.Parameters.AddWithValue("@matriculeChef", chefSelectionne.getMatricule());
+                    cmdMission.Parameters.AddWithValue("@matriculeChef", chefSelectionne.Matricule);
                     cmdMission.Parameters.AddWithValue("@feuilleDeRoute", txtSaisieFeuilleRoute.Text);
                     cmdMission.Parameters.AddWithValue("@objectifDatabaz", (int)numObjDataBaz.Value);
                     cmdMission.Parameters.AddWithValue("@budget", (int)numBudget.Value);
@@ -741,15 +726,15 @@ namespace Form_Sae24_Stargate
 
                     cmdComposer.Parameters.AddWithValue("@planete", planeteSelectionnee.getNomPlanete());
                     cmdComposer.Parameters.AddWithValue("@numero", nouveauNumero);
-                    cmdComposer.Parameters.AddWithValue("@matricule", chefSelectionne.getMatricule());
+                    cmdComposer.Parameters.AddWithValue("@matricule", chefSelectionne.Matricule);
 
                     // Chef
                     cmdComposer.ExecuteNonQuery();
 
                     // Civils
-                    foreach (UserControlCarteMembre civil in membresSelectionnes)
+                    foreach (CarteMembre civil in membresSelectionnes)
                     {
-                        cmdComposer.Parameters["@matricule"].Value = civil.getMatricule();
+                        cmdComposer.Parameters["@matricule"].Value = civil.Matricule;
                         cmdComposer.ExecuteNonQuery();
                     }
 

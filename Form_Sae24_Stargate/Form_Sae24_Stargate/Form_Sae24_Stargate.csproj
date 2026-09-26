@@ -85,6 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CarteMembre.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Connexion.cs" />
     <Compile Include="FormDetailsMembre.cs">
       <SubType>Form</SubType>
