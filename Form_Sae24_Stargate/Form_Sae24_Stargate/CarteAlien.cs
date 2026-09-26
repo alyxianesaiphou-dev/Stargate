@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace Form_Sae24_Stargate
 {
     /// <summary>
-    /// Carte d'une espèce extraterrestre : image, nom, couleur, statut (allié, ennemi, neutre) avec son degré,
+    /// Carte d'une espèce extraterrestre : image, nom, couleur, statut (allié, ennemi, neutre)
     /// et une ligne d'information en bas (planètes, présence ou nombre à capturer).
     /// Taille fixe et mêmes couleurs que CarteMembre et CartePlanete, pour s'afficher pareil sur tous les PC.
     /// Un clic déclenche l'événement Clic.
@@ -15,15 +15,15 @@ namespace Form_Sae24_Stargate
     public class CarteAlien : Panel
     {
         public const int Largeur = 200;
-        public const int Hauteur = 316;
+        public const int Hauteur = 296;
         public const int Marge = 8;
 
         //épaisseur du cadre rose de sélection
         private const int bordure = 5;
 
-        private static readonly Color couleurAllie = Color.FromArgb(40, 150, 85);
-        private static readonly Color couleurEnnemi = Color.FromArgb(200, 45, 65);
-        private static readonly Color couleurNeutre = Color.FromArgb(105, 105, 130);
+        private static readonly Color couleurAllie = Color.FromArgb(90, 225, 130);
+        private static readonly Color couleurEnnemi = Color.FromArgb(255, 95, 105);
+        private static readonly Color couleurNeutre = Color.Silver;
 
         private readonly Panel fond;
         private readonly Label lblCoche;
@@ -39,12 +39,10 @@ namespace Form_Sae24_Stargate
         /// </summary>
         public static CarteAlien DepuisLigne(DataRow ligneAlien, string info)
         {
-            string statut = ligneAlien["statut"].ToString();
-            string degre = statut == "Ennemi" ? ligneAlien["degreAgressivite"].ToString() : ligneAlien["degreBienveillance"].ToString();
-            return new CarteAlien(ligneAlien["nom"].ToString(), ligneAlien["couleur"].ToString(), statut, degre, info);
+            return new CarteAlien(ligneAlien["nom"].ToString(), ligneAlien["couleur"].ToString(), ligneAlien["statut"].ToString(), info);
         }
 
-        public CarteAlien(string nom, string couleur, string statut, string degre, string info)
+        public CarteAlien(string nom, string couleur, string statut, string info)
         {
             this.NomAlien = nom;
 
@@ -86,28 +84,21 @@ namespace Form_Sae24_Stargate
             lblCouleur.BackColor = Color.Transparent;
             lblCouleur.Text = "Couleur : " + couleur;
 
-            //statut : pastille de couleur, puis jauge du degré de bienveillance ou d'agressivité en dessous
-            PictureBox iconeDegre = new PictureBox();
-            iconeDegre.Size = new Size(170, 14);
-            iconeDegre.SizeMode = PictureBoxSizeMode.Zoom;
-            iconeDegre.BackColor = Color.Transparent;
-            iconeDegre.Image = ChargerImage(Path.Combine("Degre", IconeDegre(statut, degre) + ".png"));
-
+            //statut écrit en couleur (le degré n'est affiché que dans la fiche détaillée)
             Label lblStatut = new Label();
             lblStatut.AutoSize = false;
             lblStatut.Size = new Size(100, 26);
             lblStatut.TextAlign = ContentAlignment.MiddleCenter;
-            lblStatut.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblStatut.ForeColor = Color.White;
-            lblStatut.BackColor = statut == "Allié" ? couleurAllie : (statut == "Ennemi" ? couleurEnnemi : couleurNeutre);
+            lblStatut.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblStatut.ForeColor = statut == "Allié" ? couleurAllie : (statut == "Ennemi" ? couleurEnnemi : couleurNeutre);
+            lblStatut.BackColor = Color.Transparent;
             lblStatut.Text = statut;
 
             lblStatut.Location = new Point((largeurFond - lblStatut.Width) / 2, 216);
-            iconeDegre.Location = new Point((largeurFond - iconeDegre.Width) / 2, 250);
 
             lblInfo = new Label();
             lblInfo.AutoSize = false;
-            lblInfo.Location = new Point(4, 270);
+            lblInfo.Location = new Point(4, 250);
             lblInfo.Size = new Size(largeurFond - 8, 32);
             lblInfo.TextAlign = ContentAlignment.TopCenter;
             lblInfo.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
@@ -130,7 +121,6 @@ namespace Form_Sae24_Stargate
             fond.Controls.Add(image);
             fond.Controls.Add(lblNom);
             fond.Controls.Add(lblCouleur);
-            fond.Controls.Add(iconeDegre);
             fond.Controls.Add(lblStatut);
             fond.Controls.Add(lblInfo);
             this.Controls.Add(fond);
@@ -187,19 +177,6 @@ namespace Form_Sae24_Stargate
         {
             string chemin = Path.Combine(Application.StartupPath, "Images", "Extraterrestres", fichier);
             return File.Exists(chemin) ? Image.FromFile(chemin) : null;
-        }
-
-        private static string IconeDegre(string statut, string degre)
-        {
-            if (statut == "Allié" && degre != "")
-            {
-                return "Bienveillance" + degre;
-            }
-            if (statut == "Ennemi" && degre != "")
-            {
-                return "Malveillance" + degre;
-            }
-            return "Neutre";
         }
     }
 }
