@@ -180,6 +180,7 @@
             // dgvContacts
             // 
             this.dgvContacts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvContacts.ForeColor = System.Drawing.Color.Black;
             this.dgvContacts.Location = new System.Drawing.Point(7, 38);
             this.dgvContacts.Name = "dgvContacts";
             this.dgvContacts.ReadOnly = true;
@@ -203,6 +204,7 @@
             // dgvDepenses
             // 
             this.dgvDepenses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvDepenses.ForeColor = System.Drawing.Color.Black;
             this.dgvDepenses.Location = new System.Drawing.Point(8, 45);
             this.dgvDepenses.Name = "dgvDepenses";
             this.dgvDepenses.ReadOnly = true;

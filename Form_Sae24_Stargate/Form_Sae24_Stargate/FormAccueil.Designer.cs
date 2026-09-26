@@ -641,6 +641,7 @@
             // 
             this.dgvTab5Informateur.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvTab5Informateur.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTab5Informateur.ForeColor = System.Drawing.Color.Black;
             this.dgvTab5Informateur.Location = new System.Drawing.Point(39, 134);
             this.dgvTab5Informateur.Name = "dgvTab5Informateur";
             this.dgvTab5Informateur.RowHeadersWidth = 51;
@@ -675,6 +676,7 @@
             // 
             this.dgvTab4Depenses.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvTab4Depenses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTab4Depenses.ForeColor = System.Drawing.Color.Black;
             this.dgvTab4Depenses.Location = new System.Drawing.Point(41, 93);
             this.dgvTab4Depenses.Name = "dgvTab4Depenses";
             this.dgvTab4Depenses.RowHeadersWidth = 51;
@@ -757,6 +759,7 @@
             // 
             this.dgvTab2.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvTab2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTab2.ForeColor = System.Drawing.Color.Black;
             this.dgvTab2.Location = new System.Drawing.Point(39, 74);
             this.dgvTab2.Name = "dgvTab2";
             this.dgvTab2.RowHeadersWidth = 51;
@@ -817,6 +820,7 @@
             // 
             this.dgvTab1CopainMission.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dgvTab1CopainMission.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTab1CopainMission.ForeColor = System.Drawing.Color.Black;
             this.dgvTab1CopainMission.Location = new System.Drawing.Point(30, 116);
             this.dgvTab1CopainMission.Name = "dgvTab1CopainMission";
             this.dgvTab1CopainMission.RowHeadersWidth = 51;
