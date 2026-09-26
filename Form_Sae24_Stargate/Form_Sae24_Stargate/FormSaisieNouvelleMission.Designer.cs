@@ -431,16 +431,28 @@
             // 
             this.numBudget.Location = new System.Drawing.Point(208, 681);
             this.numBudget.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.numBudget.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
             this.numBudget.Name = "numBudget";
-            this.numBudget.Size = new System.Drawing.Size(80, 30);
+            this.numBudget.Size = new System.Drawing.Size(160, 30);
+            this.numBudget.ThousandsSeparator = true;
             this.numBudget.TabIndex = 15;
             // 
             // numObjDataBaz
             // 
             this.numObjDataBaz.Location = new System.Drawing.Point(339, 613);
             this.numObjDataBaz.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.numObjDataBaz.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
             this.numObjDataBaz.Name = "numObjDataBaz";
-            this.numObjDataBaz.Size = new System.Drawing.Size(80, 30);
+            this.numObjDataBaz.Size = new System.Drawing.Size(120, 30);
+            this.numObjDataBaz.ThousandsSeparator = true;
             this.numObjDataBaz.TabIndex = 14;
             // 
             // numNbMembre
