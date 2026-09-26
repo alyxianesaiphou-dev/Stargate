@@ -103,22 +103,45 @@ namespace Form_Sae24_Stargate
         /// <param name="btnSelect"></param>
         private void PlacerTrombino(GroupBox filtres)
         {
-            //Le trombinoscope (aliens ou planètes) occupe la même zone que les statistiques :
-            //les filtres en haut, les cartes en dessous (on fait défiler à la molette)
+            //Le trombinoscope (aliens ou planètes) va du bord gauche habituel (360) jusqu'au bord droit
+            //des statistiques, sans jamais dépasser de la fenêtre : les filtres en haut, les cartes en
+            //dessous (on fait défiler à la molette)
             System.Drawing.Rectangle zone = AdaptationEcran.BornesDeBase(tabAffichage);
             System.Drawing.Rectangle zoneFiltres = AdaptationEcran.BornesDeBase(filtres);
-
-            //sans jamais dépasser de la fenêtre (marge de 20 à droite et en bas)
             System.Drawing.Size fenetre = AdaptationEcran.TailleDeBase(this);
-            zone.Width = Math.Min(zone.Width, fenetre.Width - 20 - zone.Left);
-            zone.Height = Math.Min(zone.Height, fenetre.Height - 20 - zone.Top);
 
-            filtres.Location = new System.Drawing.Point(zone.Left, zone.Top);
-            filtres.Size = new System.Drawing.Size(zone.Width, zoneFiltres.Height);
+            int gauche = 360;
+            int droite = Math.Min(zone.Right, fenetre.Width - 20);
+            int bas = Math.Min(zone.Bottom, fenetre.Height - 20);
+
+            filtres.Location = new System.Drawing.Point(gauche, zone.Top);
+            filtres.Size = new System.Drawing.Size(droite - gauche, zoneFiltres.Height);
+
+            //les filtres des alliés et des ennemis (affichés en cochant Allié / Ennemi) collés à droite,
+            //sans recouvrir les autres filtres
+            int largeurFiltres = droite - gauche;
+            int finAutresFiltres = 0;
+            foreach (Control controle in filtres.Controls)
+            {
+                if (!(controle is GroupBox))
+                {
+                    finAutresFiltres = Math.Max(finAutresFiltres, AdaptationEcran.BornesDeBase(controle).Right);
+                }
+            }
+            foreach (Control sousFiltre in filtres.Controls)
+            {
+                if (sousFiltre is GroupBox)
+                {
+                    System.Drawing.Rectangle bornes = AdaptationEcran.BornesDeBase(sousFiltre);
+                    int x = Math.Max(finAutresFiltres + 6, largeurFiltres - 8 - bornes.Width);
+                    sousFiltre.Location = new System.Drawing.Point(x, bornes.Top);
+                    sousFiltre.Size = new System.Drawing.Size(Math.Min(bornes.Width, largeurFiltres - 8 - x), bornes.Height);
+                }
+            }
 
             int haut = zone.Top + zoneFiltres.Height + 8;
-            flpAffichage.Location = new System.Drawing.Point(zone.Left, haut);
-            flpAffichage.Size = new System.Drawing.Size(zone.Width, zone.Bottom - haut);
+            flpAffichage.Location = new System.Drawing.Point(gauche, haut);
+            flpAffichage.Size = new System.Drawing.Size(droite - gauche, bas - haut);
         }
 
         private void selectionnerBouton(UCBoutonImage btnSelect)
