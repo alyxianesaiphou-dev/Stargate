@@ -861,10 +861,13 @@
             this.tabControlMission.Controls.Add(this.tabMissionsAVenir);
             this.tabControlMission.Controls.Add(this.tabMissionsTerminees);
             this.tabControlMission.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControlMission.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlMission.Location = new System.Drawing.Point(552, 80);
             this.tabControlMission.Name = "tabControlMission";
             this.tabControlMission.SelectedIndex = 0;
-            this.tabControlMission.Size = new System.Drawing.Size(1400, 800);
+            this.tabControlMission.Size = new System.Drawing.Size(1170, 900);
             this.tabControlMission.TabIndex = 17;
             this.tabControlMission.Visible = false;
             // 
@@ -875,15 +878,17 @@
             this.tabMissionsEnCours.Location = new System.Drawing.Point(4, 29);
             this.tabMissionsEnCours.Name = "tabMissionsEnCours";
             this.tabMissionsEnCours.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMissionsEnCours.Size = new System.Drawing.Size(1392, 767);
+            this.tabMissionsEnCours.Size = new System.Drawing.Size(1162, 867);
             this.tabMissionsEnCours.TabIndex = 0;
             this.tabMissionsEnCours.Text = "Missions en cours";
             // 
             // flpMissionEnCours
             // 
-            this.flpMissionEnCours.Location = new System.Drawing.Point(0, 3);
+            this.flpMissionEnCours.AutoScroll = true;
+            this.flpMissionEnCours.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpMissionEnCours.Location = new System.Drawing.Point(3, 3);
             this.flpMissionEnCours.Name = "flpMissionEnCours";
-            this.flpMissionEnCours.Size = new System.Drawing.Size(1400, 800);
+            this.flpMissionEnCours.Size = new System.Drawing.Size(1156, 861);
             this.flpMissionEnCours.TabIndex = 2;
             // 
             // tabMissionsAVenir
@@ -893,15 +898,17 @@
             this.tabMissionsAVenir.Location = new System.Drawing.Point(4, 29);
             this.tabMissionsAVenir.Name = "tabMissionsAVenir";
             this.tabMissionsAVenir.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMissionsAVenir.Size = new System.Drawing.Size(1392, 767);
+            this.tabMissionsAVenir.Size = new System.Drawing.Size(1162, 867);
             this.tabMissionsAVenir.TabIndex = 1;
             this.tabMissionsAVenir.Text = "Missions à venir";
             // 
             // flpMissionsAVenir
             // 
-            this.flpMissionsAVenir.Location = new System.Drawing.Point(0, 3);
+            this.flpMissionsAVenir.AutoScroll = true;
+            this.flpMissionsAVenir.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpMissionsAVenir.Location = new System.Drawing.Point(3, 3);
             this.flpMissionsAVenir.Name = "flpMissionsAVenir";
-            this.flpMissionsAVenir.Size = new System.Drawing.Size(1400, 800);
+            this.flpMissionsAVenir.Size = new System.Drawing.Size(1156, 861);
             this.flpMissionsAVenir.TabIndex = 1;
             // 
             // tabMissionsTerminees
@@ -911,15 +918,17 @@
             this.tabMissionsTerminees.Location = new System.Drawing.Point(4, 29);
             this.tabMissionsTerminees.Name = "tabMissionsTerminees";
             this.tabMissionsTerminees.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMissionsTerminees.Size = new System.Drawing.Size(1392, 767);
+            this.tabMissionsTerminees.Size = new System.Drawing.Size(1162, 867);
             this.tabMissionsTerminees.TabIndex = 2;
             this.tabMissionsTerminees.Text = "Missions terminées";
             // 
             // flpMissionTerminee
             // 
-            this.flpMissionTerminee.Location = new System.Drawing.Point(0, 3);
+            this.flpMissionTerminee.AutoScroll = true;
+            this.flpMissionTerminee.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpMissionTerminee.Location = new System.Drawing.Point(3, 3);
             this.flpMissionTerminee.Name = "flpMissionTerminee";
-            this.flpMissionTerminee.Size = new System.Drawing.Size(1400, 800);
+            this.flpMissionTerminee.Size = new System.Drawing.Size(1156, 861);
             this.flpMissionTerminee.TabIndex = 0;
             // 
             // btnUCStatistiques
