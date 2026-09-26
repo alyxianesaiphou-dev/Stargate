@@ -73,6 +73,7 @@ namespace Form_Sae24_Stargate
             this.btnAnnulerEvenement = new System.Windows.Forms.Button();
             this.btnValiderEvenement = new System.Windows.Forms.Button();
             this.btnCapture = new System.Windows.Forms.Button();
+            this.btnEquipage = new System.Windows.Forms.Button();
             this.btnRetour = new System.Windows.Forms.Button();
             this.btnNvEvenement = new System.Windows.Forms.Button();
             this.btnNvDepense = new System.Windows.Forms.Button();
@@ -619,11 +620,29 @@ namespace Form_Sae24_Stargate
             this.btnNvContact.UseVisualStyleBackColor = true;
             this.btnNvContact.Click += new System.EventHandler(this.btnNvContact_Click);
             // 
+            // btnEquipage
+            // 
+            this.btnEquipage.BackColor = System.Drawing.Color.DarkViolet;
+            this.btnEquipage.FlatAppearance.BorderSize = 0;
+            this.btnEquipage.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Indigo;
+            this.btnEquipage.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Indigo;
+            this.btnEquipage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEquipage.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEquipage.ForeColor = System.Drawing.Color.White;
+            this.btnEquipage.Location = new System.Drawing.Point(330, 22);
+            this.btnEquipage.Name = "btnEquipage";
+            this.btnEquipage.Size = new System.Drawing.Size(158, 41);
+            this.btnEquipage.TabIndex = 14;
+            this.btnEquipage.Text = "Équipage";
+            this.btnEquipage.UseVisualStyleBackColor = false;
+            this.btnEquipage.Click += new System.EventHandler(this.btnEquipage_Click);
+            // 
             // UCEditionMission
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.Controls.Add(this.btnEquipage);
             this.Controls.Add(this.btnCapture);
             this.Controls.Add(this.btnRetour);
             this.Controls.Add(this.btnNvEvenement);
@@ -688,6 +707,7 @@ namespace Form_Sae24_Stargate
         private System.Windows.Forms.Label lblEspece;
         private System.Windows.Forms.Button btnRetour;
         private Button btnCapture;
+        private Button btnEquipage;
         private GroupBox gpbEspece;
         private Label label13;
         private Label label14;

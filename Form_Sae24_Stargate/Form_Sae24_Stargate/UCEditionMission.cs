@@ -545,6 +545,17 @@ namespace Form_Sae24_Stargate
             gpbEspece.Visible = true;
         }
 
+        private void btnEquipage_Click(object sender, EventArgs e)
+        {
+            gpbNvContact.Visible = false;
+            gpbNvDepense.Visible = false;
+            gpbNvEvenement.Visible = false;
+            gpbEspece.Visible = false;
+
+            FormModifierEquipage fenetreEquipage = new FormModifierEquipage(numeroEnCours, planeteEnCours);
+            fenetreEquipage.ShowDialog(this);
+        }
+
         private void btnValiderCapture_Click(object sender, EventArgs e)
         {
             try

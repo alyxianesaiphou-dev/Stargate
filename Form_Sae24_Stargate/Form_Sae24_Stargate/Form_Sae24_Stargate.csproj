@@ -116,6 +116,9 @@
     <Compile Include="FormAuthentification.Designer.cs">
       <DependentUpon>FormAuthentification.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormModifierEquipage.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FormSaisieNouvelleMission.cs">
       <SubType>Form</SubType>
     </Compile>
